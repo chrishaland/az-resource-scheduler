@@ -1,24 +1,30 @@
 import React from 'react';
-import { NavItem, NavLink } from 'reactstrap';
+import { NavItem, NavLink, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import { Resource } from "../translations/resource";
 import { resources } from "./resources";
+import { useAccount } from "../accounts/hooks";
 
 export const MenuItemAccount = () => {
-    const isLoggedIn = () => {
-        return false;
-    };
+    const [account, refetchAccount] = useAccount();
 
-    return (
+    return !!account.email ? (
+        <UncontrolledDropdown nav inNavbar>
+            <DropdownToggle nav caret>
+                {account.name}
+            </DropdownToggle>
+            <DropdownMenu>
+                <DropdownItem>
+                    <NavLink href="/api/account/logout">
+                        <Resource id={"header-admin-logout"} resources={resources}>Log out</Resource>
+                    </NavLink>
+                </DropdownItem>
+            </DropdownMenu>
+        </UncontrolledDropdown>
+    ) : (
         <NavItem>
-            {isLoggedIn() ? (
-                <NavLink href="/api/account/logout">
-                    <Resource id={"header-admin-logout"} resources={resources}>Log out</Resource>
-                </NavLink>
-            ) : (
-                <NavLink href="/api/account/login">
-                    <Resource id={"header-admin-login"} resources={resources}>Log in</Resource>
-                </NavLink>
-            )}
+            <NavLink href="/api/account/login">
+                <Resource id={"header-admin-login"} resources={resources}>Log in</Resource>
+            </NavLink>
         </NavItem>
     );
 }

@@ -25,10 +25,7 @@ namespace Service.Authentication
         public async Task<ActionResult> Execute(CancellationToken ct)
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
-
-            return new SignOutResult(OpenIdConnectDefaults.AuthenticationScheme,
-                new AuthenticationProperties { RedirectUri = "/" });
+            return Redirect("/");
         }
     }
 }

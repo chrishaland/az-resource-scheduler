@@ -127,6 +127,7 @@ namespace Host
             .AddOpenIdConnect(options =>
             {
                 options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.SignOutScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.Authority = authorityUri;
                 options.ClientId = clientId;
                 options.ClientSecret = Configuration.GetValue<string>("oidc:clientSecret");

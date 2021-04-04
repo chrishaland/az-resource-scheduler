@@ -18,10 +18,13 @@ namespace Tests.IntegrationTests
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
             var claims = new[]
-              {
+            {
                 new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.Name, "John Doe"),
+                new Claim(ClaimTypes.GivenName, "John"),
+                new Claim(ClaimTypes.Surname, "Doe"),
                 new Claim(ClaimTypes.Email, "john.doe@example.com"),
+                new Claim(ClaimTypes.Role, "admin"),
+                new Claim(ClaimTypes.Role, "user"),
             };
 
             var identity = new ClaimsIdentity(claims, Scheme.Name);

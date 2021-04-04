@@ -31,7 +31,7 @@ Add a mapper, allowing the user info endpoint access to the roles assign to a us
 | Mapper Type | User Client Role |
 | Client ID | \<client_id>
 | Multivalued | ON |
-| Token Claim Name | ${client_id}\.roles |
+| Token Claim Name | ${client_id}\\.roles |
 | Claim JSON Type | String |
 | Add to ID token | OFF |
 | Add to access token | OFF |
