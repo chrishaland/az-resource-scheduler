@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useReducer } from "react";
 
 const LanguageContext = createContext();
-const initialState = { language: "en" };
+const initialState = { language: localStorage.getItem("language") || "en" };
 
 const reducer = (state, action) => {
   switch (action.type) {
