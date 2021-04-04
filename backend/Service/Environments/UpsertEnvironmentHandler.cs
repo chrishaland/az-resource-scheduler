@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Repository;
 using System;
@@ -8,6 +9,7 @@ using Environment = Repository.Models.Environment;
 
 namespace Service.Environments
 {
+    [Authorize(Policy = "admin")]
     [Route("api/environment/upsert")]
     public class UpsertEnvironmentHandler : CommandHandlerBase<UpsertEnvironmentRequest>
     {

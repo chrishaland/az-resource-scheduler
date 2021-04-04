@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Service.Authentication
 {
-    [Authorize(AuthenticationSchemes = OpenIdConnectDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = OpenIdConnectDefaults.AuthenticationScheme, Policy = "account")]
     [Route("api/account/logout")]
     public class LogoutCommandHandler : Controller
     {

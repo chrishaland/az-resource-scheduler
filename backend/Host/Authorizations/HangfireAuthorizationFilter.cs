@@ -1,4 +1,5 @@
 ﻿using Hangfire.Dashboard;
+using System.Security.Claims;
 
 namespace Host.Authorizations
 {
@@ -8,8 +9,14 @@ namespace Host.Authorizations
         {
             var httpContext = context.GetHttpContext();
 
-            // Allow all authenticated users to see the Dashboard (potentially dangerous).
-            return httpContext.User.Identity.IsAuthenticated;
+            var adminRole = httpContext.User.FindFirst(c =>
+                c.Type == ClaimTypes.Role &&
+                c.Value == "admin"
+            );
+
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            return httpContext.User.Identity.IsAuthenticated && adminRole != null;
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
     }
 }

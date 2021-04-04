@@ -20,6 +20,9 @@ using Microsoft.EntityFrameworkCore;
 using Repository;
 using Unleash;
 using Host.Authorizations;
+using Microsoft.AspNetCore.Authentication;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Host
 {
@@ -40,7 +43,16 @@ namespace Host
 
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("admin", policy => policy.RequireClaim(""));
+                options.DefaultPolicy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .RequireClaim(ClaimTypes.Role, "user")
+                    .Build();
+
+                options.AddPolicy("admin", policy => policy
+                    .RequireAuthenticatedUser()
+                    .RequireClaim(ClaimTypes.Role, "admin"));
+
+                options.AddPolicy("account", policy => policy.RequireAuthenticatedUser());
             });
 
             var connectionString = Configuration.GetConnectionString("Database");
@@ -85,6 +97,7 @@ namespace Host
 
         private void AddOpenIdConnectAuthentication(IServiceCollection services)
         {
+            var clientId = Configuration.GetValue<string>("oidc:clientId");
             var authorityUri = Configuration.GetValue<string>("oidc:authorityUri");
             if (string.IsNullOrEmpty(authorityUri)) return;
 
@@ -105,7 +118,7 @@ namespace Host
             {
                 options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.Authority = authorityUri;
-                options.ClientId = Configuration.GetValue<string>("oidc:clientId");
+                options.ClientId = clientId;
                 options.ClientSecret = Configuration.GetValue<string>("oidc:clientSecret");
                 options.CallbackPath = "/api/account/signin-oidc";
                 options.SignedOutRedirectUri = "/";
@@ -113,7 +126,16 @@ namespace Host
                 options.SaveTokens = true;
                 options.GetClaimsFromUserInfoEndpoint = true;
                 options.TokenValidationParameters.ValidateIssuer = true;
-                options.RequireHttpsMetadata = !Environment.IsDevelopment();
+                options.RequireHttpsMetadata = true;
+                options.ClaimActions.MapJsonKey(
+                    claimType: ClaimTypes.Role, 
+                    jsonKey: $"{clientId}.roles",
+                    valueType: ClaimValueTypes.String);
+                options.Events.OnUserInformationReceived = context =>
+                {
+                    // For debugging user info mappings
+                    return Task.CompletedTask;
+                };
             });
         }
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Repository;
 using Repository.Models;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace Service.Tenants
 {
+    [Authorize(Policy = "admin")]
     [Route("api/tenant/upsert")]
     public class UpsertTenantHandler : CommandHandlerBase<UpsertTenantRequest>
     {
