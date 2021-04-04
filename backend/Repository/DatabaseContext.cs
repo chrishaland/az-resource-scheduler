@@ -17,6 +17,10 @@ namespace Repository
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Resource>()
+                .HasIndex(r => new { r.Name, r.ResourceGroup })
+                .IsUnique();
+
+            modelBuilder.Entity<Resource>()
                 .HasMany(r => r.Environments)
                 .WithMany(e => e.Resources)
                 .UsingEntity(b => b.ToTable("EnvironmentResources"));

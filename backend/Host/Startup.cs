@@ -22,6 +22,8 @@ using Host.Authorizations;
 using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Azure.ResourceManager.Compute;
+using Azure.Identity;
 
 namespace Host
 {
@@ -80,6 +82,16 @@ namespace Host
             services.AddSwaggerGen();
             services.AddControllers();
             services.AddHangfireServer();
+
+            var subscriptionId = Configuration.GetValue<string>("azure:subscriptionId");
+            if (!string.IsNullOrEmpty(subscriptionId))
+            {
+                services.AddTransient(_ => new ComputeManagementClient(subscriptionId, new ClientSecretCredential(
+                    tenantId: Configuration.GetValue<string>("azure:tenantId"),
+                    clientId: Configuration.GetValue<string>("azure:clientId"),
+                    clientSecret: Configuration.GetValue<string>("azure:clientSecret")
+                )));
+            }
 
             var unleashApiUrl = Configuration.GetValue<string>("unleash:apiUrl");
             if (!string.IsNullOrEmpty(unleashApiUrl))

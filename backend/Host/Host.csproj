@@ -9,6 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Azure.Identity" Version="1.3.0" />
+    <PackageReference Include="Azure.ResourceManager.Compute" Version="1.0.0-preview.2" />
     <PackageReference Include="Haland.DotNetTrace" Version="1.0.1" />
     <PackageReference Include="Hangfire.AspNetCore" Version="1.7.20" />
     <PackageReference Include="Hangfire.SqlServer" Version="1.7.20" />

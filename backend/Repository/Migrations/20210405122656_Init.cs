@@ -24,10 +24,11 @@ namespace Repository.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    AzureId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ResourceGroup = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Kind = table.Column<int>(type: "int", nullable: false)
+                    Kind = table.Column<int>(type: "int", nullable: false),
+                    NodePoolCount = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -99,6 +100,12 @@ namespace Repository.Migrations
                 name: "IX_EnvironmentResources_ResourcesId",
                 table: "EnvironmentResources",
                 column: "ResourcesId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Resources_Name_ResourceGroup",
+                table: "Resources",
+                columns: new[] { "Name", "ResourceGroup" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_TenantResources_TenantsId",

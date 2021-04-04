@@ -10,16 +10,18 @@ namespace Repository.Models
         public Guid Id { get; set; }
 
         [Required]
-        public string AzureId { get; set; }
+        public string Name { get; set; }
 
         [Required]
-        public string Name { get; set; }
+        public string ResourceGroup { get; set; }
 
         [Required]
         public string Description { get; set; }
 
         [Required]
         public ResourceKind Kind { get; set; }
+
+        public int? NodePoolCount { get; set; }
 
         public ICollection<Tenant> Tenants { get; set; }
         public ICollection<Environment> Environments { get; set; }

@@ -57,7 +57,18 @@ dotnet user-secrets set "oidc:clientId" "<clientId>"
 dotnet user-secrets set "oidc:clientSecret" "<clientSecret>"
 dotnet user-secrets set "oidc:authorityUri" "<authorityUri>"
 
+# Azure
+dotnet user-secrets set "azure:subscriptionId" "<subscriptionId>"
+dotnet user-secrets set "azure:tenantId" "<tenantId>"
+dotnet user-secrets set "azure:clientId" "<clientId>"
+dotnet user-secrets set "azure:clientSecret" "<clientSecret>"
+
 # Feature flags
 dotnet user-secrets set "unleash:apiUrl" "<apiUrl>"
 dotnet user-secrets set "unleash:instanceTag" "<instanceTag>"
 ```
+
+## Tooling and dependencies
+
+* [Hangfire](https://www.hangfire.io/)
+* [Azure SDK for .NET](https://github.com/Azure/azure-sdk-for-net/)
