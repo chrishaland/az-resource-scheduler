@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -113,6 +112,17 @@ namespace Host
                 options.Cookie.MaxAge = TimeSpan.FromMinutes(30);
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
                 options.SlidingExpiration = false;
+                options.Events.OnRedirectToAccessDenied = context =>
+                {
+                    // Handle redirects for api controller requests by returning Forbidden (403) instead
+                    // https://github.com/dotnet/aspnetcore/issues/9039
+                    if (context.Request.Path.StartsWithSegments("/api") && context.Response.StatusCode == 200)
+                    {
+                        context.Response.StatusCode = 403;
+                    }
+
+                    return Task.CompletedTask;
+                };
             })
             .AddOpenIdConnect(options =>
             {
@@ -131,6 +141,22 @@ namespace Host
                     claimType: ClaimTypes.Role, 
                     jsonKey: $"{clientId}.roles",
                     valueType: ClaimValueTypes.String);
+                
+                options.Events.OnRedirectToIdentityProvider = context =>
+                {
+                    // Handle redirects for api controller requests by returning Unauthorized (401) instead
+                    // https://github.com/dotnet/aspnetcore/issues/9039
+
+                    if (!context.Request.Path.StartsWithSegments("/api/account/login") && 
+                        context.Request.Path.StartsWithSegments("/api") && 
+                        context.Response.StatusCode == 200)
+                    {
+                        context.Response.StatusCode = 401;
+                        context.HandleResponse();
+                    }
+
+                    return Task.CompletedTask;
+                };
                 options.Events.OnUserInformationReceived = context =>
                 {
                     // For debugging user info mappings
@@ -197,11 +223,6 @@ namespace Host
                 options.FrameAncestors(s => s.Self());
                 options.ImageSources(s => s.Self());
                 options.ScriptSources(s => s.Self());
-            });
-
-            app.UseCookiePolicy(new CookiePolicyOptions
-            {
-                HttpOnly = HttpOnlyPolicy.Always
             });
 
             app.UseRouting();
