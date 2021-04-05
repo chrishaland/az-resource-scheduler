@@ -3,9 +3,12 @@ import { NavItem, NavLink, UncontrolledDropdown, DropdownToggle, DropdownMenu, D
 import { Link } from 'react-router-dom';
 import { Resource } from "../translations/resource";
 import { resources } from "./resources";
+import { useAccount } from "../accounts/hooks";
 
 export const MenuItemAdmin = () => {
-    return (
+    const [account] = useAccount();
+
+    return !!account.roles && account.roles.includes('admin') ? (
         <UncontrolledDropdown nav inNavbar>
             <DropdownToggle nav caret>
                 <Resource id={"header-admin-title"} resources={resources}>Admin</Resource>
@@ -35,5 +38,5 @@ export const MenuItemAdmin = () => {
                 </DropdownItem>
             </DropdownMenu>
         </UncontrolledDropdown>
-    );
+    ) : null;
 }
