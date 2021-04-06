@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Cronos;
+using Hangfire;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Repository;
@@ -45,7 +47,10 @@ namespace Service.Environments
         {
             var environment = new Environment
             {
-                Name = request.Name
+                Name = request.Name,
+                Description = request.Description,
+                ScheduledStartup = request.ScheduledStartup,
+                ScheduledUptime = request.ScheduledUptime
             };
 
             var entity = await _context.Environments.AddAsync(environment, ct);
@@ -58,7 +63,10 @@ namespace Service.Environments
             var entity = _context.Environments.Update(new Environment 
             {
                 Id = request.Id.Value,
-                Name = request.Name
+                Name = request.Name,
+                Description = request.Description,
+                ScheduledStartup = request.ScheduledStartup,
+                ScheduledUptime = request.ScheduledUptime
             });
 
             await _context.SaveChangesAsync(ct);
@@ -70,6 +78,7 @@ namespace Service.Environments
             // Validate request data
             if (request.Id.Equals(Guid.Empty)) return true;
             if (string.IsNullOrEmpty(request.Name)) return true;
+            if (!string.IsNullOrEmpty(request.ScheduledStartup) && !IsCronExpressionValid(request.ScheduledStartup)) return true;
 
             async Task<bool> EntityExists(Guid id, CancellationToken ct)
             {
@@ -83,6 +92,20 @@ namespace Service.Environments
             if (request.Id.HasValue && (await EntityExists(request.Id.Value, ct))) return true;
 
             return false;
+        }
+
+        private static bool IsCronExpressionValid(string cronExpression)
+        {
+            try
+            {
+                CronExpression.Parse(cronExpression);
+            }
+            catch(CronFormatException)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

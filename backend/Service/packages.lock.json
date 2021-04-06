@@ -12,6 +12,12 @@
           "System.Text.Json": "4.6.0"
         }
       },
+      "Cronos": {
+        "type": "Direct",
+        "requested": "[0.7.0, )",
+        "resolved": "0.7.0",
+        "contentHash": "r7bwVGU2Kkh95cbXB88BtOtZyUOE/DDX+Shhe9SXgcsHV+LFPulygdoVxGLTqTpibwGw4B09WTNqQgFr3QrP9g=="
+      },
       "Hangfire.Core": {
         "type": "Direct",
         "requested": "[1.7.20, )",

@@ -19,7 +19,7 @@ export const Environments = () => {
             {selectedEnvironment === null ? (
                 <EnvironmentList environments={environments} onSelectEnvironment={onSelectEnvironment} />
             ) : (
-                <EnvironmentForm id={selectedEnvironment} removeSelectedEnvironment={() => onSelectEnvironment(null)}  />
+                <EnvironmentForm id={selectedEnvironment} onSelectEnvironment={onSelectEnvironment} removeSelectedEnvironment={() => onSelectEnvironment(null)}  />
             )}
         </>
     );

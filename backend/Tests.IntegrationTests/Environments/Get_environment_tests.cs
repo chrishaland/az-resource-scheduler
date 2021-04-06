@@ -14,7 +14,7 @@ namespace Tests.IntegrationTests.Environments
         [Test]
         public async Task Get_existing_environment()
         {
-            var entity = new Environment { Name = "Development" };
+            var entity = new Environment { Name = "dev", Description = "Development", ScheduledStartup = "* * * * *", ScheduledUptime = 6 };
             await SUT.Database.Environments.AddAsync(entity);
             await SUT.Database.SaveChangesAsync();
 
@@ -28,6 +28,9 @@ namespace Tests.IntegrationTests.Environments
             {
                 Assert.That(content.Environment.Id, Is.EqualTo(entity.Id));
                 Assert.That(content.Environment.Name, Is.EqualTo(entity.Name));
+                Assert.That(content.Environment.Description, Is.EqualTo(entity.Description));
+                Assert.That(content.Environment.ScheduledStartup, Is.EqualTo(entity.ScheduledStartup));
+                Assert.That(content.Environment.ScheduledUptime, Is.EqualTo(entity.ScheduledUptime));
             });
         }
 

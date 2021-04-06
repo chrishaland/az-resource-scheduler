@@ -3,7 +3,8 @@ import { useEnvironmentsStore } from "./store";
 import { cqrs } from '../cqrs.js';
 
 export const useEnvironment = (id) => {
-    const [environment, setEnvironment] = useState({ id: "", name: "" });
+    const emptyState = () => ({ id: "", name: "", description: "", scheduledStartup: "0 7 * * *", scheduledUptime: 10 });
+    const [environment, setEnvironment] = useState(emptyState);
 
     useEffect(() => get(id), [id]);
 
@@ -11,7 +12,7 @@ export const useEnvironment = (id) => {
 
     const get = (id) => {
         if (id === "") {
-            setEnvironment({ id: "", name: "" });
+            setEnvironment(emptyState);
         }
         else {
             cqrs('/api/environment/get', { id: id })
@@ -22,7 +23,14 @@ export const useEnvironment = (id) => {
     }
 
     const upsert = (callback) => {
-        cqrs('/api/environment/upsert', { id: environment.id === "" ? null : environment.id, name: environment.name })
+        var request = { 
+            id: environment.id === "" ? null : environment.id,
+            name: environment.name,
+            description: environment.description,
+            scheduledStartup: environment.scheduledStartup,
+            scheduledUptime: environment.scheduledUptime
+        };
+        cqrs('/api/environment/upsert', request)
             .then((response) => response.json())
             .then((json) => {
                 get(json.id);

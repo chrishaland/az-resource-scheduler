@@ -16,6 +16,9 @@ export const EnvironmentList = (props) => {
                         <th>
                             <Resource id={"list-header-name"} resources={resources}>Name</Resource>
                         </th>
+                        <th>
+                            <Resource id={"list-header-description"} resources={resources}>Description</Resource>
+                        </th>
                         <th>&nbsp;</th>
                     </tr>
                 </thead>
@@ -24,6 +27,7 @@ export const EnvironmentList = (props) => {
                         <tr key={index + 1}>
                             <th scope="row">{index + 1}</th>
                             <td>{environment.name}</td>
+                            <td>{environment.description}</td>
                             <td className="right-align">
                                 <Button color="info" onClick={() => onSelectEnvironment(environment.id)}>
                                     <Resource id={"list-header-edit"} resources={resources}>Edit</Resource>
@@ -34,9 +38,10 @@ export const EnvironmentList = (props) => {
                     <tr key="add">
                         <th>&nbsp;</th>
                         <td>&nbsp;</td>
+                        <td>&nbsp;</td>
                         <td className="right-align">
                             <Button color="info" onClick={() => onSelectEnvironment("")}>
-                                <Resource id={"list-add"} resources={resources}>Add</Resource>
+                                <Resource id={"add"} resources={resources}>Add</Resource>
                             </Button>
                         </td>
                     </tr>
