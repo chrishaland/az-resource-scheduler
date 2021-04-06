@@ -3,10 +3,10 @@ using System;
 
 namespace Service.Resources
 {
-    public record UpsertResourceRequest(Guid? Id, string Name, string ResourceGroup, string Description, int Kind, Guid[] TenantIds, Guid[] EnvironmentIds);
+    public record UpsertResourceRequest(Guid? Id, string Name, string ResourceGroup, string Description, int Kind, Guid[] EnvironmentIds);
 
 
-    public record ListResourcesRequest(Guid? TenantId, Guid? EnvironmentId);
+    public record ListResourcesRequest(Guid? EnvironmentId);
 
     public record ListResourcesResponse
     {

@@ -5,7 +5,6 @@ export const resources = {
         "language-en": "Engelsk",
         "header-title": "Azure Resource Scheduler",
         "header-admin-title": "Admin",
-        "header-admin-tenants": "Innehavere",
         "header-admin-environments": "Miljøer",
         "header-admin-jobs": "Jobber",
         "header-admin-login": "Logg inn",

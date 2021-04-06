@@ -23,7 +23,6 @@ namespace Repository.Models
 
         public int? NodePoolCount { get; set; }
 
-        public ICollection<Tenant> Tenants { get; set; }
         public ICollection<Environment> Environments { get; set; }
     }
 

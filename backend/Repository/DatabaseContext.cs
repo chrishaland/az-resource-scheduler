@@ -12,7 +12,6 @@ namespace Repository
 
         public DbSet<Environment> Environments { get; set; }
         public DbSet<Resource> Resources { get; set; }
-        public DbSet<Tenant> Tenants { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -24,11 +23,6 @@ namespace Repository
                 .HasMany(r => r.Environments)
                 .WithMany(e => e.Resources)
                 .UsingEntity(b => b.ToTable("EnvironmentResources"));
-
-            modelBuilder.Entity<Resource>()
-                .HasMany(r => r.Tenants)
-                .WithMany(t => t.Resources)
-                .UsingEntity(b => b.ToTable("TenantResources"));
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) => optionsBuilder

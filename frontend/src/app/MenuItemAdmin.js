@@ -16,13 +16,6 @@ export const MenuItemAdmin = () => {
             <DropdownMenu>
                 <DropdownItem>
                     <NavItem>
-                        <NavLink tag={Link} to="/tenants">
-                            <Resource id={"header-admin-tenants"} resources={resources}>Tenants</Resource>
-                        </NavLink>
-                    </NavItem>
-                </DropdownItem>
-                <DropdownItem>
-                    <NavItem>
                         <NavLink tag={Link} to="/environments">
                             <Resource id={"header-admin-environments"} resources={resources}>Environments</Resource>
                         </NavLink>
