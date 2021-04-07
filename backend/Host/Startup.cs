@@ -24,6 +24,9 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Azure.ResourceManager.Compute;
 using Azure.Identity;
+using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.OpenApi.Models;
+using System.Linq;
 
 namespace Host
 {
@@ -79,9 +82,28 @@ namespace Host
             }
 
             services.AddTracing();
-            services.AddSwaggerGen();
             services.AddControllers();
             services.AddHangfireServer();
+
+            services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1", new OpenApiInfo { Title = "Azure Resource Scheduler", Version = "v1" });
+                options.TagActionsBy(api =>
+                {
+                    var controllerActionDescriptor = api.ActionDescriptor as ControllerActionDescriptor;
+                    if (controllerActionDescriptor == null) throw new InvalidOperationException("Unable to determine tag for endpoint.");
+                    
+                    var route = controllerActionDescriptor.AttributeRouteInfo?.Template;
+                    if (route != null)
+                    {
+                        var parts = route.Split('/');
+                        if (parts.Length > 1) return new[] { String.Join('/', parts.Take(parts.Length - 1)) };
+                    }
+
+                    return new[] { controllerActionDescriptor.ControllerName };
+                });
+                options.DocInclusionPredicate((name, api) => true);
+            });
 
             var subscriptionId = Configuration.GetValue<string>("azure:subscriptionId");
             if (!string.IsNullOrEmpty(subscriptionId))
@@ -223,7 +245,7 @@ namespace Host
             app.UseSwagger();
             app.UseSwaggerUI(options =>
             {
-                options.SwaggerEndpoint("/swagger/v1/swagger.json", "API");
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
                 options.RoutePrefix = "docs";
             });
 
