@@ -4,6 +4,15 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Repository.Models
 {
+    public class VirtualMachine : Resource 
+    {
+    }
+
+    public class VirtualMachineScaleSet : Resource 
+    {
+        public int? Capacity { get; set; }
+    }
+
     public class Resource
     {
         [Key]
@@ -18,18 +27,8 @@ namespace Repository.Models
         [Required]
         public string Description { get; set; }
 
-        [Required]
-        public ResourceKind Kind { get; set; }
-
-        public int? NodePoolCount { get; set; }
-
+        public VirtualMachine VirtualMachine { get; set; }
+        public VirtualMachineScaleSet VirtualMachineScaleSet { get; set; }
         public ICollection<Environment> Environments { get; set; }
-    }
-
-    public enum ResourceKind
-    {
-        NotSet = 0,
-        VirtualMachine = 1,
-        NodePool = 2
     }
 }

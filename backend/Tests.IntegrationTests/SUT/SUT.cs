@@ -16,7 +16,7 @@ namespace Tests.IntegrationTests
             var (response, contentString) = await SendHttpRequest(request, data);
 
             T content = null;
-            if (!string.IsNullOrEmpty(contentString))
+            if (!string.IsNullOrEmpty(contentString) && response.IsSuccessStatusCode)
             {
                 var contentStream = new MemoryStream(Encoding.UTF8.GetBytes(contentString));
                 content = await JsonSerializer.DeserializeAsync<T>(contentStream, SerializerOptions);

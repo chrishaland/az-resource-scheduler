@@ -18,17 +18,7 @@ namespace Service.Jobs
 
         public async Task Execute(Resource resource, CancellationToken ct)
         {
-            switch (resource.Kind)
-            {
-                case ResourceKind.VirtualMachine:
-                    await StopVirtualMachine(resource, ct);
-                    break;
-                case ResourceKind.NodePool:
-                    await StopNodePool(resource, ct);
-                    break;
-                default:
-                    break;
-            }
+            //TODO
         }
 
         private async Task StopVirtualMachine(Resource resource, CancellationToken ct = default)

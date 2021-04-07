@@ -70,6 +70,7 @@ public class OneTimeTestServerSetup
                     .AddScheme<AuthenticationSchemeOptions, MockAuthenticatedUser>("BasicAuthentication", null);
             services.AddSingleton(_unleashMock.Object);
             services.AddHangfire(configuration => configuration
+                .UseSerilogLogProvider()
                 .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
                 .UseSimpleAssemblyNameTypeSerializer()
                 .UseRecommendedSerializerSettings()

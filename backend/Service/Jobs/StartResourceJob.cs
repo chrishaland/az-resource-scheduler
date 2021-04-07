@@ -1,6 +1,9 @@
 ﻿using Azure.ResourceManager.Compute;
 using Azure.ResourceManager.Compute.Models;
+using Microsoft.EntityFrameworkCore;
+using Repository;
 using Repository.Models;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Resource = Repository.Models.Resource;
@@ -9,26 +12,18 @@ namespace Service.Jobs
 {
     public class StartResourceJob
     {
+        private readonly DatabaseContext _context;
         private readonly ComputeManagementClient _client;
 
-        public StartResourceJob(ComputeManagementClient client)
+        public StartResourceJob(DatabaseContext context, ComputeManagementClient client)
         {
+            _context = context;
             _client = client;
         }
 
-        public async Task Execute(Resource resource, CancellationToken ct)
+        public async Task Execute(Guid resourceId, CancellationToken ct)
         {
-            switch(resource.Kind)
-            {
-                case ResourceKind.VirtualMachine:
-                    await StartVirtualMachine(resource, ct);
-                    break;
-                case ResourceKind.NodePool:
-                    await StartNodePool(resource, ct);
-                    break;
-                default:
-                    break;
-            }
+            //TODO
         }
 
         private async Task StartVirtualMachine(Resource resource, CancellationToken ct = default)
@@ -48,7 +43,7 @@ namespace Service.Jobs
                 cancellationToken: ct
             );
 
-            vmss.Value.Sku.Capacity = resource.NodePoolCount;
+            vmss.Value.Sku.Capacity = resource.VirtualMachineScaleSet.Capacity;
 
             var parameters = new VirtualMachineScaleSetUpdate
             {

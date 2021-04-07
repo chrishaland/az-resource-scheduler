@@ -27,6 +27,7 @@ using Azure.Identity;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.OpenApi.Models;
 using System.Linq;
+using Service.Resources;
 
 namespace Host
 {
@@ -43,8 +44,78 @@ namespace Host
 
         public void ConfigureServices(IServiceCollection services)
         {
+            AddDatabase(services);
+            AddFeatureFlags(services);
+            AddOpenApiDocumentation(services);
+            
+            AddAuthorizationAndPolicies(services);
             AddOpenIdConnectAuthentication(services);
 
+            services.AddTransient<UpsertVirtualMachineHandler>();
+            services.AddTransient<UpsertVirtualMachineScaleSetHandler>();
+
+            services.AddTracing();
+            services.AddControllers();
+            services.AddHangfireServer();
+
+            var subscriptionId = Configuration.GetValue<string>("azure:subscriptionId");
+            if (!string.IsNullOrEmpty(subscriptionId))
+            {
+                services.AddTransient(_ => new ComputeManagementClient(subscriptionId, new ClientSecretCredential(
+                    tenantId: Configuration.GetValue<string>("azure:tenantId"),
+                    clientId: Configuration.GetValue<string>("azure:clientId"),
+                    clientSecret: Configuration.GetValue<string>("azure:clientSecret")
+                )));
+            }
+        }
+
+        private void AddDatabase(IServiceCollection services)
+        {
+            var connectionString = Configuration.GetConnectionString("Database");
+            if (!string.IsNullOrEmpty(connectionString))
+            {
+                services.AddDbContext<DatabaseContext>(options =>
+                {
+                    options.UseSqlServer(connectionString);
+                });
+
+                services.AddHangfire(configuration => configuration
+                    .UseSerilogLogProvider()
+                    .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                    .UseSimpleAssemblyNameTypeSerializer()
+                    .UseRecommendedSerializerSettings()
+                    .UseSqlServerStorage(connectionString, new SqlServerStorageOptions
+                    {
+                        CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+                        SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+                        QueuePollInterval = TimeSpan.Zero,
+                        UseRecommendedIsolationLevel = true,
+                        DisableGlobalLocks = true
+                    }));
+            }
+        }
+
+        private void AddFeatureFlags(IServiceCollection services)
+        {
+            var unleashApiUrl = Configuration.GetValue<string>("unleash:apiUrl");
+            if (!string.IsNullOrEmpty(unleashApiUrl))
+            {
+                services.AddSingleton<IUnleash>(new DefaultUnleash(new UnleashSettings
+                {
+                    AppName = "Azure Resource Scheduler",
+                    Environment = Configuration.GetValue<string>("unleash:environment") ?? "Development",
+                    InstanceTag = Configuration.GetValue<string>("unleash:instanceTag"),
+                    UnleashApi = new Uri(unleashApiUrl)
+                }));
+            }
+            else
+            {
+                services.AddSingleton<IUnleash>(new DefaultUnleash(new UnleashSettings()));
+            }
+        }
+
+        private void AddAuthorizationAndPolicies(IServiceCollection services)
+        {
             services.AddAuthorization(options =>
             {
                 options.DefaultPolicy = new AuthorizationPolicyBuilder()
@@ -58,74 +129,6 @@ namespace Host
 
                 options.AddPolicy("account", policy => policy.RequireAuthenticatedUser());
             });
-
-            var connectionString = Configuration.GetConnectionString("Database");
-            if (!string.IsNullOrEmpty(connectionString))
-            {
-                services.AddDbContext<DatabaseContext>(options =>
-                {
-                    options.UseSqlServer(connectionString);
-                });
-
-                services.AddHangfire(configuration => configuration
-                    .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
-                    .UseSimpleAssemblyNameTypeSerializer()
-                    .UseRecommendedSerializerSettings()
-                    .UseSqlServerStorage(connectionString, new SqlServerStorageOptions
-                    {
-                        CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
-                        SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
-                        QueuePollInterval = TimeSpan.Zero,
-                        UseRecommendedIsolationLevel = true,
-                        DisableGlobalLocks = true
-                    }));
-            }
-
-            services.AddTracing();
-            services.AddControllers();
-            services.AddHangfireServer();
-
-            services.AddSwaggerGen(options =>
-            {
-                options.SwaggerDoc("v1", new OpenApiInfo { Title = "Azure Resource Scheduler", Version = "v1" });
-                options.TagActionsBy(api =>
-                {
-                    var controllerActionDescriptor = api.ActionDescriptor as ControllerActionDescriptor;
-                    if (controllerActionDescriptor == null) throw new InvalidOperationException("Unable to determine tag for endpoint.");
-                    
-                    var route = controllerActionDescriptor.AttributeRouteInfo?.Template;
-                    if (route != null)
-                    {
-                        var parts = route.Split('/');
-                        if (parts.Length > 1) return new[] { String.Join('/', parts.Take(parts.Length - 1)) };
-                    }
-
-                    return new[] { controllerActionDescriptor.ControllerName };
-                });
-                options.DocInclusionPredicate((name, api) => true);
-            });
-
-            var subscriptionId = Configuration.GetValue<string>("azure:subscriptionId");
-            if (!string.IsNullOrEmpty(subscriptionId))
-            {
-                services.AddTransient(_ => new ComputeManagementClient(subscriptionId, new ClientSecretCredential(
-                    tenantId: Configuration.GetValue<string>("azure:tenantId"),
-                    clientId: Configuration.GetValue<string>("azure:clientId"),
-                    clientSecret: Configuration.GetValue<string>("azure:clientSecret")
-                )));
-            }
-
-            var unleashApiUrl = Configuration.GetValue<string>("unleash:apiUrl");
-            if (!string.IsNullOrEmpty(unleashApiUrl))
-            {
-                services.AddSingleton<IUnleash>(new DefaultUnleash(new UnleashSettings
-                {
-                    AppName = "Azure Resource Scheduler",
-                    Environment = Configuration.GetValue<string>("unleash:environment") ?? "Development",
-                    InstanceTag = Configuration.GetValue<string>("unleash:instanceTag"),
-                    UnleashApi = new Uri(unleashApiUrl)
-                }));
-            }
         }
 
         private void AddOpenIdConnectAuthentication(IServiceCollection services)
@@ -197,6 +200,29 @@ namespace Host
                     // For debugging user info mappings
                     return Task.CompletedTask;
                 };
+            });
+        }
+
+        private void AddOpenApiDocumentation(IServiceCollection services)
+        {
+            services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1", new OpenApiInfo { Title = "Azure Resource Scheduler", Version = "v1" });
+                options.TagActionsBy(api =>
+                {
+                    var controllerActionDescriptor = api.ActionDescriptor as ControllerActionDescriptor;
+                    if (controllerActionDescriptor == null) throw new InvalidOperationException("Unable to determine tag for endpoint.");
+
+                    var route = controllerActionDescriptor.AttributeRouteInfo?.Template;
+                    if (route != null)
+                    {
+                        var parts = route.Split('/');
+                        if (parts.Length > 1) return new[] { String.Join('/', parts.Take(parts.Length - 1)) };
+                    }
+
+                    return new[] { controllerActionDescriptor.ControllerName };
+                });
+                options.DocInclusionPredicate((name, api) => true);
             });
         }
 
