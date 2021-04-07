@@ -29,6 +29,13 @@ export const MenuItemAdmin = () => {
                         </NavLink>
                     </NavItem>
                 </DropdownItem>
+                <DropdownItem>
+                    <NavItem>
+                        <NavLink href="/docs">
+                            <Resource id={"header-admin-docs"} resources={resources}>Documentation</Resource>
+                        </NavLink>
+                    </NavItem>
+                </DropdownItem>
             </DropdownMenu>
         </UncontrolledDropdown>
     ) : null;
