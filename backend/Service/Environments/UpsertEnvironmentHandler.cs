@@ -1,10 +1,10 @@
 ﻿using Cronos;
-using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Repository;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Environment = Repository.Models.Environment;
@@ -24,9 +24,10 @@ namespace Service.Environments
 
         public override async Task<ActionResult<CommandResponse>> Execute([FromBody] UpsertEnvironmentRequest request, CancellationToken ct)
         {
-            if (await IsBadRequest(request, ct))
+            var (isBadRequest, errorMessages) = await IsBadRequest(request, ct);
+            if (isBadRequest)
             {
-                return BadRequest();
+                return BadRequest(errorMessages);
             }
 
             Guid id;
@@ -73,25 +74,43 @@ namespace Service.Environments
             return entity.Entity.Id;
         }
 
-        private async Task<bool> IsBadRequest(UpsertEnvironmentRequest request, CancellationToken ct)
+        private async Task<(bool isBadRequest, string[] errorMessages)> IsBadRequest(UpsertEnvironmentRequest request, CancellationToken ct)
         {
-            // Validate request data
-            if (request.Id.Equals(Guid.Empty)) return true;
-            if (string.IsNullOrEmpty(request.Name)) return true;
-            if (!string.IsNullOrEmpty(request.ScheduledStartup) && !IsCronExpressionValid(request.ScheduledStartup)) return true;
+            var isBadRequest = false;
+            var errorMessages = new List<string>();
 
-            async Task<bool> EntityExists(Guid id, CancellationToken ct)
+            async Task<bool> IsIdInvalid()
             {
+                if (!request.Id.HasValue) return false;
+                if (request.Id.Equals(Guid.Empty)) return true;
+
                 var environment = await _context.Environments
-                    .AsNoTracking()
-                    .SingleOrDefaultAsync(e => e.Id.Equals(id), ct);
+                        .AsNoTracking()
+                        .SingleOrDefaultAsync(e => e.Id.Equals(request.Id.Value), ct);
+
                 return environment == null;
             }
 
-            // Verify that entity with id exists if updating
-            if (request.Id.HasValue && (await EntityExists(request.Id.Value, ct))) return true;
+            // Validate request data
+            if (await IsIdInvalid())
+            {
+                isBadRequest = true;
+                errorMessages.Add("invalid_id");
+            }
 
-            return false;
+            if (string.IsNullOrEmpty(request.Name))
+            {
+                isBadRequest = true;
+                errorMessages.Add("missing_name");
+            }
+
+            if (!string.IsNullOrEmpty(request.ScheduledStartup) && !IsCronExpressionValid(request.ScheduledStartup))
+            {
+                isBadRequest = true;
+                errorMessages.Add("invalid_scheduledStartup");
+            }
+
+            return (isBadRequest, errorMessages.ToArray());
         }
 
         private static bool IsCronExpressionValid(string cronExpression)

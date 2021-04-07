@@ -23,7 +23,7 @@ namespace Tests.IntegrationTests.Environments
 
             var request = new HttpRequestMessage(HttpMethod.Post, "/api/environment/list");
 
-            var (response, content) = await SUT.SendHttpRequest<ListEnvironmentsResponse>(request, new ListEnvironmentsRequest());
+            var (response, content) = await SUT.SendHttpRequest<ListEnvironmentsResponse>(request, new { });
 
             Assert.Multiple(() =>
             {
@@ -52,7 +52,7 @@ namespace Tests.IntegrationTests.Environments
             await SUT.Database.DeleteAllAsync<Environment>();
             var request = new HttpRequestMessage(HttpMethod.Post, "/api/environment/list");
 
-            var (response, content) = await SUT.SendHttpRequest<ListEnvironmentsResponse>(request, new ListEnvironmentsRequest());
+            var (response, content) = await SUT.SendHttpRequest<ListEnvironmentsResponse>(request, new { });
 
             Assert.Multiple(() =>
             {

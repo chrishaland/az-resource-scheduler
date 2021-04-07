@@ -18,7 +18,7 @@ namespace Tests.IntegrationTests.Environments
             await SUT.Database.Environments.AddAsync(entity);
             await SUT.Database.SaveChangesAsync();
 
-            var data = new GetEnvironmentRequest(Id: entity.Id);
+            var data = new { id = entity.Id };
             var request = new HttpRequestMessage(HttpMethod.Post, "/api/environment/get");
 
             var (response, content) = await SUT.SendHttpRequest<GetEnvironmentResponse>(request, data);
@@ -38,7 +38,7 @@ namespace Tests.IntegrationTests.Environments
         [TestCase("d982041a-3789-40ea-909d-479386000602")]
         public async Task Getting_non_existent_environments_results_in_not_found_response(string id)
         {
-            var data = new GetEnvironmentRequest(Id: Guid.Parse(id));
+            var data = new { id = Guid.Parse(id) };
             var request = new HttpRequestMessage(HttpMethod.Post, "/api/environment/get");
 
             var (response, _) = await SUT.SendHttpRequest<GetEnvironmentResponse>(request, data);

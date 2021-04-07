@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using Service;
-using Service.Environments;
 using System;
 using System.Net;
 using System.Net.Http;
@@ -16,7 +15,13 @@ namespace Tests.IntegrationTests.Environments
         [Test]
         public async Task Create_new_environment()
         {
-            var data = new UpsertEnvironmentRequest(Id: null, Name: "qa", Description: "Test", ScheduledStartup: "* * * * *", ScheduledUptime: 6);
+            var data = new 
+            { 
+                name = "qa", 
+                description = "Test",
+                scheduledStartup = "* * * * *",
+                scheduledUptime = 6
+            };
             var request = new HttpRequestMessage(HttpMethod.Post, "/api/environment/upsert");
 
             var (response, content) = await SUT.SendHttpRequest<CommandResponse>(request, data);
@@ -34,10 +39,10 @@ namespace Tests.IntegrationTests.Environments
             Assert.Multiple(() =>
             {
                 Assert.That(entity.Id, Is.EqualTo(Guid.Parse(content.Id)));
-                Assert.That(entity.Name, Is.EqualTo(data.Name));
-                Assert.That(entity.Description, Is.EqualTo(data.Description));
-                Assert.That(entity.ScheduledStartup, Is.EqualTo(data.ScheduledStartup));
-                Assert.That(entity.ScheduledUptime, Is.EqualTo(data.ScheduledUptime));
+                Assert.That(entity.Name, Is.EqualTo(data.name));
+                Assert.That(entity.Description, Is.EqualTo(data.description));
+                Assert.That(entity.ScheduledStartup, Is.EqualTo(data.scheduledStartup));
+                Assert.That(entity.ScheduledUptime, Is.EqualTo(data.scheduledUptime));
             });
         }
 
@@ -49,7 +54,14 @@ namespace Tests.IntegrationTests.Environments
             await SUT.Database.SaveChangesAsync();
             SUT.Database.ChangeTracker.Clear();
 
-            var data = new UpsertEnvironmentRequest(Id: entity.Id, Name: "2", Description: "Two", ScheduledStartup: "* 2 * * *", ScheduledUptime: 2);
+            var data = new
+            {
+                id = entity.Id,
+                name = "2",
+                description = "Two",
+                scheduledStartup = "* 2 * * *",
+                scheduledUptime = 2
+            };
             var request = new HttpRequestMessage(HttpMethod.Post, "/api/environment/upsert");
 
             var (response, content) = await SUT.SendHttpRequest<CommandResponse>(request, data);
@@ -60,11 +72,11 @@ namespace Tests.IntegrationTests.Environments
 
             Assert.Multiple(() =>
             {
-                Assert.That(entity.Id, Is.EqualTo(data.Id));
-                Assert.That(entity.Name, Is.EqualTo(data.Name));
-                Assert.That(entity.Description, Is.EqualTo(data.Description));
-                Assert.That(entity.ScheduledStartup, Is.EqualTo(data.ScheduledStartup));
-                Assert.That(entity.ScheduledUptime, Is.EqualTo(data.ScheduledUptime));
+                Assert.That(entity.Id, Is.EqualTo(data.id));
+                Assert.That(entity.Name, Is.EqualTo(data.name));
+                Assert.That(entity.Description, Is.EqualTo(data.description));
+                Assert.That(entity.ScheduledStartup, Is.EqualTo(data.scheduledStartup));
+                Assert.That(entity.ScheduledUptime, Is.EqualTo(data.scheduledUptime));
             });
         }
 
@@ -72,7 +84,12 @@ namespace Tests.IntegrationTests.Environments
         [TestCase("d982041a-3789-40ea-909d-479386000602")]
         public async Task Invalid_id_should_result_in_bad_request_response(string id)
         {
-            var data = new UpsertEnvironmentRequest(Id: Guid.Parse(id), Name: "Invalid id", Description: null, ScheduledStartup: null, ScheduledUptime: 0);
+            var data = new
+            {
+                id = Guid.Parse(id),
+                name = "2",
+                scheduledStartup = "* * * * *"
+            };
             var request = new HttpRequestMessage(HttpMethod.Post, "/api/environment/upsert");
             
             var (response, _) = await SUT.SendHttpRequest<CommandResponse>(request, data);
@@ -83,7 +100,11 @@ namespace Tests.IntegrationTests.Environments
         [TestCase("")]
         public async Task Invalid_name_should_result_in_bad_request_response(string name)
         {
-            var data = new UpsertEnvironmentRequest(Id: null, Name: name, Description: null, ScheduledStartup: null, ScheduledUptime: 0);
+            var data = new
+            {
+                name = name,
+                scheduledStartup = "* * * * *"
+            };
             var request = new HttpRequestMessage(HttpMethod.Post, "/api/environment/upsert");
 
             var (response, _) = await SUT.SendHttpRequest<CommandResponse>(request, data);
@@ -94,7 +115,11 @@ namespace Tests.IntegrationTests.Environments
         [TestCase("this is not a cron expression")]
         public async Task Invalid_scheduled_startup_should_result_in_bad_request_response(string cronExpression)
         {
-            var data = new UpsertEnvironmentRequest(Id: null, Name: "Invalid cron expression", Description: null, ScheduledStartup: cronExpression, ScheduledUptime: 0);
+            var data = new
+            {
+                name = " ",
+                scheduledStartup = cronExpression
+            };
             var request = new HttpRequestMessage(HttpMethod.Post, "/api/environment/upsert");
 
             var (response, _) = await SUT.SendHttpRequest<CommandResponse>(request, data);
