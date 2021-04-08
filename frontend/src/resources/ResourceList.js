@@ -22,7 +22,7 @@ export const ResourceList = (props) => {
                 </tr>
             </thead>
             <tbody>
-                {resources.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0)).map((resource, index) => (
+                {resources.sort((a, b) => (a.description > b.description) ? 1 : ((b.description > a.description) ? -1 : 0)).map((resource, index) => (
                     <tr key={index + 1}>
                         <th scope="row">{index + 1}</th>
                         <td>{resource.name}</td>

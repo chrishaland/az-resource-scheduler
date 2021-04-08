@@ -22,7 +22,7 @@ export const EnvironmentList = (props) => {
                 </tr>
             </thead>
             <tbody>
-                {environments.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0)).map((environment, index) => (
+                {environments.sort((a, b) => (a.description > b.description) ? 1 : ((b.description > a.description) ? -1 : 0)).map((environment, index) => (
                     <tr key={index + 1}>
                         <th scope="row">{index + 1}</th>
                         <td>{environment.name}</td>
