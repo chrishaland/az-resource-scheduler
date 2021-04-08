@@ -1,8 +1,8 @@
 import React from 'react';
 import { NavItem, NavLink, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import { Link } from 'react-router-dom';
-import { Resource } from "../translations/resource";
-import { resources } from "./resources";
+import { Locale } from "../translations/locale";
+import { locales } from "./locales";
 import { useAccount } from "../accounts/hooks";
 
 export const MenuItemAdmin = () => {
@@ -11,13 +11,13 @@ export const MenuItemAdmin = () => {
     return !!account.roles && account.roles.includes('admin') ? (
         <UncontrolledDropdown nav inNavbar>
             <DropdownToggle nav caret>
-                <Resource id={"header-admin-title"} resources={resources}>Admin</Resource>
+                <Locale id={"header-admin-title"} locales={locales}>Admin</Locale>
             </DropdownToggle>
             <DropdownMenu>
                 <DropdownItem>
                     <NavItem>
                         <NavLink tag={Link} to="/environments">
-                            <Resource id={"header-admin-environments"} resources={resources}>Environments</Resource>
+                            <Locale id={"header-admin-environments"} locales={locales}>Environments</Locale>
                         </NavLink>
                     </NavItem>
                 </DropdownItem>
@@ -25,14 +25,14 @@ export const MenuItemAdmin = () => {
                 <DropdownItem>
                     <NavItem>
                         <NavLink href="/jobs">
-                            <Resource id={"header-admin-jobs"} resources={resources}>Jobs</Resource>
+                            <Locale id={"header-admin-jobs"} locales={locales}>Jobs</Locale>
                         </NavLink>
                     </NavItem>
                 </DropdownItem>
                 <DropdownItem>
                     <NavItem>
                         <NavLink href="/docs">
-                            <Resource id={"header-admin-docs"} resources={resources}>Documentation</Resource>
+                            <Locale id={"header-admin-docs"} locales={locales}>Documentation</Locale>
                         </NavLink>
                     </NavItem>
                 </DropdownItem>

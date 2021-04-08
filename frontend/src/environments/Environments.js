@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Resource } from '../translations/resource';
-import { resources } from './resources';
+import { Locale } from '../translations/locale';
+import { locales } from './locales';
 import { EnvironmentList } from './EnvironmentList';
 import { EnvironmentForm } from './EnvironmentForm';
 import { useEnvironments } from './hooks';
@@ -14,7 +14,7 @@ export const Environments = () => {
     return (
         <>
             <h1 className="header">
-                <Resource id={"header"} resources={resources}>Manage Environments</Resource>
+                <Locale id={"header"} locales={locales}>Manage Environments</Locale>
             </h1>
             {selectedEnvironment === null ? (
                 <EnvironmentList environments={environments} onSelectEnvironment={onSelectEnvironment} />

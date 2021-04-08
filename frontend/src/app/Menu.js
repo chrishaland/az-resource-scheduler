@@ -3,8 +3,8 @@ import { Collapse, Navbar, NavbarToggler, NavbarBrand, Nav } from 'reactstrap';
 import { MenuItemAdmin } from './MenuItemAdmin';
 import { MenuItemAccount } from './MenuItemAccount';
 import { MenuItemLanguage } from './MenuItemLanguage';
-import { resources } from './resources';
-import { Resource } from '../translations/resource';
+import { locales } from './locales';
+import { Locale } from '../translations/locale';
 import './Menu.css';
 
 export const Menu = () => {
@@ -16,7 +16,7 @@ export const Menu = () => {
         <div>
             <Navbar className="navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3" light>
                 <NavbarBrand href="/">
-                    <Resource id={"header-title"} resources={resources}>Azure Resource Scheduler</Resource>
+                    <Locale id={"header-title"} locales={locales}>Azure Resource Scheduler</Locale>
                 </NavbarBrand>
                 <NavbarToggler onClick={toggle} />
                 <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={isOpen} navbar>

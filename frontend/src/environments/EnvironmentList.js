@@ -1,7 +1,7 @@
 import React from 'react';
 import { Table, Button } from 'reactstrap';
-import { Resource } from '../translations/resource';
-import { resources } from './resources';
+import { Locale } from '../translations/locale';
+import { locales } from './locales';
 import './styles.css';
 
 export const EnvironmentList = (props) => {
@@ -14,10 +14,10 @@ export const EnvironmentList = (props) => {
                     <tr>
                         <th>#</th>
                         <th>
-                            <Resource id={"list-header-name"} resources={resources}>Name</Resource>
+                            <Locale id={"list-header-name"} locales={locales}>Name</Locale>
                         </th>
                         <th>
-                            <Resource id={"list-header-description"} resources={resources}>Description</Resource>
+                            <Locale id={"list-header-description"} locales={locales}>Description</Locale>
                         </th>
                         <th>&nbsp;</th>
                     </tr>
@@ -30,7 +30,7 @@ export const EnvironmentList = (props) => {
                             <td>{environment.description}</td>
                             <td className="right-align">
                                 <Button color="info" onClick={() => onSelectEnvironment(environment.id)}>
-                                    <Resource id={"list-header-edit"} resources={resources}>Edit</Resource>
+                                    <Locale id={"list-header-edit"} locales={locales}>Edit</Locale>
                                 </Button>
                             </td>
                         </tr>
@@ -41,7 +41,7 @@ export const EnvironmentList = (props) => {
                         <td>&nbsp;</td>
                         <td className="right-align">
                             <Button color="info" onClick={() => onSelectEnvironment("")}>
-                                <Resource id={"add"} resources={resources}>Add</Resource>
+                                <Locale id={"add"} locales={locales}>Add</Locale>
                             </Button>
                         </td>
                     </tr>

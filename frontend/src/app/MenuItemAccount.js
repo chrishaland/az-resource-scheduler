@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavItem, NavLink, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
-import { Resource } from "../translations/resource";
-import { resources } from "./resources";
+import { Locale } from "../translations/locale";
+import { locales } from "./locales";
 import { useAccount } from "../accounts/hooks";
 
 export const MenuItemAccount = () => {
@@ -15,7 +15,7 @@ export const MenuItemAccount = () => {
             <DropdownMenu>
                 <DropdownItem>
                     <NavLink href="/api/account/logout">
-                        <Resource id={"header-admin-logout"} resources={resources}>Log out</Resource>
+                        <Locale id={"header-admin-logout"} locales={locales}>Log out</Locale>
                     </NavLink>
                 </DropdownItem>
             </DropdownMenu>
@@ -23,7 +23,7 @@ export const MenuItemAccount = () => {
     ) : (
         <NavItem>
             <NavLink href="/api/account/login">
-                <Resource id={"header-admin-login"} resources={resources}>Log in</Resource>
+                <Locale id={"header-admin-login"} locales={locales}>Log in</Locale>
             </NavLink>
         </NavItem>
     );

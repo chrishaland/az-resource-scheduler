@@ -1,7 +1,7 @@
 import React from "react";
 import { Input, Button } from 'reactstrap';
-import { Resource } from '../translations/resource';
-import { resources } from './resources';
+import { Locale } from '../translations/locale';
+import { locales } from './locales';
 import { useEnvironment, useEnvironments } from './hooks';
 import './styles.css';
 
@@ -26,33 +26,33 @@ export const EnvironmentForm = (props) => {
         <>
             <div className="col right-align">
                 <Button onClick={removeSelectedEnvironment} outline color="danger" type="submit">
-                    <Resource id={"form-close"} resources={resources}>Close</Resource>
+                    <Locale id={"form-close"} locales={locales}>Close</Locale>
                 </Button>
             </div>
             <form onSubmit={handleSubmit}>
                 <div className="col">
-                    <Resource id={"form-id"} resources={resources}>Id</Resource>
+                    <Locale id={"form-id"} locales={locales}>Id</Locale>
                     <Input type="text" name="id" value={environment.id} disabled />
                 </div>
                 <div className="col">
-                    <Resource id={"form-name"} resources={resources}>Name</Resource>
+                    <Locale id={"form-name"} locales={locales}>Name</Locale>
                     <Input type="text" name="name" value={environment.name} onChange={handleChange} />
                 </div>
                 <div className="col">
-                    <Resource id={"form-description"} resources={resources}>Description</Resource>
+                    <Locale id={"form-description"} locales={locales}>Description</Locale>
                     <Input type="text" name="description" value={environment.description} onChange={handleChange} />
                 </div>
                 <div className="col">
-                    <Resource id={"form-scheduledStartup"} resources={resources}>Scheduled startup (cron expression)</Resource>
+                    <Locale id={"form-scheduledStartup"} locales={locales}>Scheduled startup (cron expression)</Locale>
                     <Input type="text" name="scheduledStartup" value={environment.scheduledStartup} onChange={handleChange} />
                 </div>
                 <div className="col">
-                    <Resource id={"form-scheduledUptime"} resources={resources}>Scheduled uptime (hours)</Resource>
+                    <Locale id={"form-scheduledUptime"} locales={locales}>Scheduled uptime (hours)</Locale>
                     <Input type="text" name="scheduledUptime" value={environment.scheduledUptime} onChange={handleChange} />
                 </div>
                 <div className="col">
                     <Button color="info" type="submit">
-                        <Resource id={"form-save"} resources={resources}>Save</Resource>
+                        <Locale id={"form-save"} locales={locales}>Save</Locale>
                     </Button>
                 </div>
             </form>
@@ -60,7 +60,7 @@ export const EnvironmentForm = (props) => {
             {false ? (
             <div className="col right-align">
                 <Button color="info" onClick={() => onSelectEnvironment("")}>
-                    <Resource id={"add"} resources={resources}>Add</Resource>
+                    <Locale id={"add"} locales={locales}>Add</Locale>
                 </Button>
             </div>
             ) : null}

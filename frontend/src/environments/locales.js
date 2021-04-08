@@ -1,4 +1,4 @@
-export const resources = {
+export const locales = {
     "no": {
         "header": "Rediger miljøer",
         "add": "Nytt",
