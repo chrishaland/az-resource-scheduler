@@ -20,7 +20,12 @@ namespace Service.Schedules
 
         public override async Task<ActionResult<CommandResponse>> Execute([FromBody] ScheduleEnvironmentManuallyRequest request, CancellationToken ct)
         {
-            await _startEnvironmentJob.Execute(request.EnvironmentId, request.UptimeInMinutes);
+            await _startEnvironmentJob.Execute(
+                environmentId: request.EnvironmentId, 
+                uptimeInMinutes: request.UptimeInMinutes,
+                allowWeekendRuns: true,
+                allowHolidayRuns: true
+            );
             return Ok(new CommandResponse(request.EnvironmentId.ToString()));
         }
     }

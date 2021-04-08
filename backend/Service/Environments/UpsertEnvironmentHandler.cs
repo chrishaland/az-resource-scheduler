@@ -89,7 +89,7 @@ namespace Service.Environments
             {
                 RecurringJob.AddOrUpdate(
                     recurringJobId: recurringJobName,
-                    methodCall: () => _startEnvironmentJob.Execute(environment.Id, environment.ScheduledUptime * 60),
+                    methodCall: () => _startEnvironmentJob.Execute(environment.Id, environment.ScheduledUptime * 60, false, false),
                     cronExpression: environment.ScheduledStartup,
                     timeZone: TimeZoneInfo.Local);
             }

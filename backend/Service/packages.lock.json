@@ -46,6 +46,12 @@
           "Microsoft.Net.Http.Headers": "2.2.0"
         }
       },
+      "Nager.Date": {
+        "type": "Direct",
+        "requested": "[1.28.2, )",
+        "resolved": "1.28.2",
+        "contentHash": "h3v3VgVLFCEO2DmEnWOlxJEfSj1lEsl26KaNdcgU6QB/lpUVIdT76vA7Ue2lswuX9qUAVCdd0ZKFJYo27w/lUQ=="
+      },
       "Unleash.Client": {
         "type": "Direct",
         "requested": "[1.6.1, )",
