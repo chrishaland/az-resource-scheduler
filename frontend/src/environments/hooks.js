@@ -3,7 +3,7 @@ import { useEnvironmentsStore } from "./store";
 import { cqrs } from '../cqrs.js';
 
 export const useEnvironment = (id) => {
-    const emptyState = () => ({ id: "", name: "", description: "", scheduledStartup: "0 7 * * *", scheduledUptime: 10 });
+    const emptyState = () => ({ id: "", name: "", description: "", scheduledStartup: "0 7 * * *", scheduledUptime: 0 });
     const [environment, setEnvironment] = useState(emptyState);
 
     useEffect(() => get(id), [id]);
