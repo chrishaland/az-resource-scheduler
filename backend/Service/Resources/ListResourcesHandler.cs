@@ -21,6 +21,7 @@ namespace Service.Resources
         public override async Task<ActionResult<ListResourcesResponse>> Execute([FromBody] ListResourcesRequest request, CancellationToken ct)
         {
             var queryable = _context.Resources
+                .Include(r => r.Environments)
                 .Include(r => r.VirtualMachine)
                 .Include(r => r.VirtualMachineScaleSet)
                 .AsNoTracking();

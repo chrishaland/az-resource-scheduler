@@ -1,0 +1,11 @@
+.header {
+    margin-bottom: 3rem;
+}
+
+.right-align {
+    text-align: right;
+}
+
+form > div {
+    margin-bottom: 0.6rem;
+}

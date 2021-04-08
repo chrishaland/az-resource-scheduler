@@ -1,5 +1,6 @@
 ﻿using Repository.Models;
 using System;
+using System.Linq;
 
 namespace Service.Resources
 {
@@ -27,6 +28,7 @@ namespace Service.Resources
         string Name,
         string ResourceGroup, 
         string Description,
+        Guid[] EnvironmentIds,
         VirtualMachineDto VirtualMachineExtentions,
         VirtualMachineScaleSetDto VirtualMachineScaleSetExtentions
     )
@@ -37,6 +39,7 @@ namespace Service.Resources
                 Name: entity.Name,
                 ResourceGroup: entity.ResourceGroup,
                 Description: entity.Description,
+                EnvironmentIds: entity.Environments?.Select(e => e.Id).ToArray() ?? Array.Empty<Guid>(),
                 VirtualMachineExtentions: new VirtualMachineDto(),
                 VirtualMachineScaleSetExtentions: null
             );
@@ -47,6 +50,7 @@ namespace Service.Resources
                 Name: entity.Name,
                 ResourceGroup: entity.ResourceGroup,
                 Description: entity.Description,
+                EnvironmentIds: entity.Environments?.Select(e => e.Id).ToArray() ?? Array.Empty<Guid>(),
                 VirtualMachineExtentions: null,
                 VirtualMachineScaleSetExtentions: new VirtualMachineScaleSetDto(
                     Capacity: entity.Capacity

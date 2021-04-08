@@ -22,6 +22,7 @@ namespace Service.Resources
         {
             var entity = await _context.Resources
                 .AsNoTracking()
+                .Include(r => r.Environments)
                 .Include(r => r.VirtualMachine)
                 .Include(r => r.VirtualMachineScaleSet)
                 .Where(e => e.Id.Equals(request.Id))

@@ -5,6 +5,7 @@ export const locales = {
         "language-en": "Engelsk",
         "header-title": "Azure Resource Scheduler",
         "header-admin-title": "Admin",
+        "header-admin-resources": "Ressurser",
         "header-admin-environments": "Miljøer",
         "header-admin-jobs": "Jobber",
         "header-admin-docs": "Dokumentasjon",

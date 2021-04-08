@@ -21,6 +21,13 @@ export const MenuItemAdmin = () => {
                         </NavLink>
                     </NavItem>
                 </DropdownItem>
+                <DropdownItem>
+                    <NavItem>
+                        <NavLink tag={Link} to="/resources">
+                            <Locale id={"header-admin-resources"} locales={locales}>Resources</Locale>
+                        </NavLink>
+                    </NavItem>
+                </DropdownItem>
                 <DropdownItem divider />
                 <DropdownItem>
                     <NavItem>
