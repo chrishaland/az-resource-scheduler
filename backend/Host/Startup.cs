@@ -45,11 +45,12 @@ namespace Host
         public void ConfigureServices(IServiceCollection services)
         {
             AddDatabase(services);
-            AddFeatureFlags(services);
             AddOpenApiDocumentation(services);
             
             AddAuthorizationAndPolicies(services);
             AddOpenIdConnectAuthentication(services);
+
+            services.AddUnleash(Configuration);
 
             services.AddTransient<UpsertVirtualMachineHandler>();
             services.AddTransient<UpsertVirtualMachineScaleSetHandler>();
@@ -92,25 +93,6 @@ namespace Host
                         UseRecommendedIsolationLevel = true,
                         DisableGlobalLocks = true
                     }));
-            }
-        }
-
-        private void AddFeatureFlags(IServiceCollection services)
-        {
-            var unleashApiUrl = Configuration.GetValue<string>("unleash:apiUrl");
-            if (!string.IsNullOrEmpty(unleashApiUrl))
-            {
-                services.AddSingleton<IUnleash>(new DefaultUnleash(new UnleashSettings
-                {
-                    AppName = "Azure Resource Scheduler",
-                    Environment = Configuration.GetValue<string>("unleash:environment") ?? "Development",
-                    InstanceTag = Configuration.GetValue<string>("unleash:instanceTag"),
-                    UnleashApi = new Uri(unleashApiUrl)
-                }));
-            }
-            else
-            {
-                services.AddSingleton<IUnleash>(new DefaultUnleash(new UnleashSettings()));
             }
         }
 
@@ -174,6 +156,7 @@ namespace Host
                 options.SaveTokens = true;
                 options.GetClaimsFromUserInfoEndpoint = true;
                 options.TokenValidationParameters.ValidateIssuer = true;
+                options.TokenValidationParameters.NameClaimType = ClaimTypes.Email;
                 options.RequireHttpsMetadata = true;
                 options.ClaimActions.MapJsonKey(
                     claimType: ClaimTypes.Role, 
@@ -289,6 +272,7 @@ namespace Host
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseUnleash();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
