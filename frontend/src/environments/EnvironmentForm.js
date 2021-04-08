@@ -2,13 +2,12 @@ import React from "react";
 import { Input, Button } from 'reactstrap';
 import { Locale } from '../translations/locale';
 import { locales } from './locales';
-import { useEnvironment, useEnvironments } from './hooks';
+import { useEnvironment } from './hooks';
 import './styles.css';
 
 export const EnvironmentForm = (props) => {
     const { id, onSelectEnvironment, removeSelectedEnvironment } = props;
 
-    const { refetchEnvironments } = useEnvironments();
     const [environment, changeEnvironment, upsert] = useEnvironment(id);
 
     const handleChange = (event) => {
@@ -19,7 +18,7 @@ export const EnvironmentForm = (props) => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        upsert(refetchEnvironments);
+        upsert(removeSelectedEnvironment);
     };
 
     return (

@@ -7,10 +7,14 @@ import { useEnvironments } from './hooks';
 import './styles.css';
 
 export const Environments = () => {
-    const { environments } = useEnvironments();
+    const { environments, refetchEnvironments } = useEnvironments();
     const [selectedEnvironment, setSelectedEnvironment] = useState(null);
     const onSelectEnvironment = (id) => setSelectedEnvironment(id);
-
+    
+    const removeSelectedEnvironment = () => { 
+        onSelectEnvironment(null);
+        refetchEnvironments(); 
+    };
     return (
         <>
             <h1 className="header">
@@ -19,7 +23,7 @@ export const Environments = () => {
             {selectedEnvironment === null ? (
                 <EnvironmentList environments={environments} onSelectEnvironment={onSelectEnvironment} />
             ) : (
-                <EnvironmentForm id={selectedEnvironment} onSelectEnvironment={onSelectEnvironment} removeSelectedEnvironment={() => onSelectEnvironment(null)}  />
+                <EnvironmentForm id={selectedEnvironment} onSelectEnvironment={onSelectEnvironment} removeSelectedEnvironment={removeSelectedEnvironment} />
             )}
         </>
     );
