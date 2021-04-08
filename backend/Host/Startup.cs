@@ -17,7 +17,6 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Repository;
-using Unleash;
 using Host.Authorizations;
 using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
@@ -28,6 +27,7 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.OpenApi.Models;
 using System.Linq;
 using Service.Resources;
+using Service.Jobs;
 
 namespace Host
 {
@@ -52,6 +52,9 @@ namespace Host
 
             services.AddUnleash(Configuration);
 
+            services.AddTransient<StopResourceJob>();
+            services.AddTransient<StartResourceJob>();
+            services.AddTransient<StartEnvironmentJob>();
             services.AddTransient<UpsertVirtualMachineHandler>();
             services.AddTransient<UpsertVirtualMachineScaleSetHandler>();
 

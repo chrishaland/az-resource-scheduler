@@ -20,8 +20,7 @@ export const ScheduleItem = (props) => {
     };
 
     const onStartEnvironment = () => {
-        //cqrs('/api/environment/get', { id: id, uptimeInMinutes: uptime })
-        console.log("Starting environment: '" + environment.id + "'");
+        cqrs('/api/schedule/start-environment-manually', { environmentId: environment.id, uptimeInMinutes: uptime });
     };
 
     return (

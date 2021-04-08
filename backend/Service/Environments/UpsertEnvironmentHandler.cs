@@ -1,8 +1,10 @@
 ﻿using Cronos;
+using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Repository;
+using Service.Jobs;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -16,10 +18,12 @@ namespace Service.Environments
     public class UpsertEnvironmentHandler : CommandHandlerBase<UpsertEnvironmentRequest>
     {
         private readonly DatabaseContext _context;
+        private readonly StartEnvironmentJob _startEnvironmentJob;
 
-        public UpsertEnvironmentHandler(DatabaseContext context)
+        public UpsertEnvironmentHandler(DatabaseContext context, StartEnvironmentJob startEnvironmentJob)
         {
             _context = context;
+            _startEnvironmentJob = startEnvironmentJob;
         }
 
         public override async Task<ActionResult<CommandResponse>> Execute([FromBody] UpsertEnvironmentRequest request, CancellationToken ct)
@@ -56,6 +60,7 @@ namespace Service.Environments
 
             var entity = await _context.Environments.AddAsync(environment, ct);
             await _context.SaveChangesAsync(ct);
+            AddOrUpdateRecurringJob(entity.Entity);
             return entity.Entity.Id;
         }
 
@@ -71,7 +76,23 @@ namespace Service.Environments
             });
 
             await _context.SaveChangesAsync(ct);
+            AddOrUpdateRecurringJob(entity.Entity);
             return entity.Entity.Id;
+        }
+
+        private void AddOrUpdateRecurringJob(Environment environment)
+        {
+            var recurringJobName = $"start_environment_{environment.Id}";
+
+            RecurringJob.RemoveIfExists(recurringJobName);
+            if (environment.ScheduledUptime > 0)
+            {
+                RecurringJob.AddOrUpdate(
+                    recurringJobId: recurringJobName,
+                    methodCall: () => _startEnvironmentJob.Execute(environment.Id, environment.ScheduledUptime * 60),
+                    cronExpression: environment.ScheduledStartup,
+                    timeZone: TimeZoneInfo.Local);
+            }
         }
 
         private async Task<(bool isBadRequest, string[] errorMessages)> IsBadRequest(UpsertEnvironmentRequest request, CancellationToken ct)

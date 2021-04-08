@@ -1,27 +1,54 @@
 ﻿using Azure.ResourceManager.Compute;
 using Azure.ResourceManager.Compute.Models;
-using Repository.Models;
+using Microsoft.EntityFrameworkCore;
+using Repository;
+using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Resource = Repository.Models.Resource;
+using VirtualMachine = Repository.Models.VirtualMachine;
+using VirtualMachineScaleSet = Repository.Models.VirtualMachineScaleSet;
 
 namespace Service.Jobs
 {
     public class StopResourceJob
     {
+        private readonly DatabaseContext _context;
         private readonly ComputeManagementClient _client;
 
-        public StopResourceJob(ComputeManagementClient client)
+        public StopResourceJob(DatabaseContext context, ComputeManagementClient client)
         {
+            _context = context;
             _client = client;
         }
 
-        public async Task Execute(Resource resource, CancellationToken ct)
+        public async Task Execute(Guid resourceId)
         {
-            //TODO
+            CancellationToken ct = default;
+
+            var entity = await _context.Resources
+               .AsNoTracking()
+               .Include(r => r.VirtualMachine)
+               .Include(r => r.VirtualMachineScaleSet)
+               .Where(e => e.Id.Equals(resourceId))
+               .SingleOrDefaultAsync(ct);
+
+            if (entity == null) return;
+
+            switch (entity)
+            {
+                case VirtualMachine vm:
+                    await StopVirtualMachine(vm, ct);
+                    break;
+                case VirtualMachineScaleSet vmss:
+                    await StopVirtualMachineScaleSet(vmss, ct);
+                    break;
+                default:
+                    return;
+            }
         }
 
-        private async Task StopVirtualMachine(Resource resource, CancellationToken ct = default)
+        private async Task StopVirtualMachine(VirtualMachine resource, CancellationToken ct)
         {
             await _client.VirtualMachines.StartPowerOffAsync(
                 resourceGroupName: resource.ResourceGroup,
@@ -30,7 +57,7 @@ namespace Service.Jobs
             );
         }
 
-        private async Task StopNodePool(Resource resource, CancellationToken ct)
+        private async Task StopVirtualMachineScaleSet(VirtualMachineScaleSet resource, CancellationToken ct)
         {
             var vmss = await _client.VirtualMachineScaleSets.GetAsync(
                 resourceGroupName: resource.ResourceGroup,
