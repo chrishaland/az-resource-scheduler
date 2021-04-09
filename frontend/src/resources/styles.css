@@ -9,3 +9,11 @@
 form > div {
     margin-bottom: 0.6rem;
 }
+
+.environments {
+    float: left;
+}
+
+.save {
+    float: left;
+}

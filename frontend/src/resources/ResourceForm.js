@@ -1,7 +1,8 @@
 import React from "react";
-import { Input, Button, ButtonGroup } from 'reactstrap';
+import { Input, InputGroup, InputGroupAddon, InputGroupText, Button, ButtonGroup } from 'reactstrap';
 import { Locale } from '../translations/locale';
 import { locales } from './locales';
+import { useEnvironments } from '../environments/hooks';
 import { useResource, useResources } from './hooks';
 import './styles.css';
 
@@ -9,9 +10,26 @@ export const ResourceForm = (props) => {
     const { id, onSelectResource, removeSelectedResource } = props;
     const [resource, changeResource, upsert] = useResource(id);
 
+    const { environments } = useEnvironments();
+
     const handleTypeChange = (vm, vmss) => {
         changeResource("virtualMachineExtentions", vm);
         changeResource("virtualMachineScaleSetExtentions", vmss);
+    };
+
+    const handleEnvironmentsChange = (event) => {
+        const environmentId = event.target.value;
+        const environmentIds = resource.environmentIds;
+        if (event.target.checked) {
+            if (environmentIds.includes(environmentId)) return;
+            environmentIds.push(environmentId);
+            changeResource("environmentIds", environmentIds);
+        }
+        else {
+            if (!environmentIds.includes(environmentId)) return;
+            environmentIds.splice(environmentIds.indexOf(environmentId), 1);
+            changeResource("environmentIds", environmentIds);
+        }
     };
 
     const handleChange = (event) => {
@@ -72,20 +90,28 @@ export const ResourceForm = (props) => {
                         <Input type="text" name="virtualMachineScaleSetExtentions.capacity" value={resource.virtualMachineScaleSetExtentions.capacity} onChange={handleChange} />
                     </div>
                 ) : null}
+
                 <div className="col">
+                    <Locale id={"form-environments"} locales={locales}>Linked environments</Locale>
+                </div>
+                {environments.sort((a, b) => (a.description > b.description) ? 1 : ((b.description > a.description) ? -1 : 0)).map((environment, index) => (
+                    <div key={index} className="col col-lg-6 environments">
+                        <InputGroup>
+                            <InputGroupAddon addonType="prepend">
+                                <InputGroupText>
+                                    <Input addon type="checkbox" checked={resource.environmentIds.includes(environment.id)} value={environment.id} onChange={handleEnvironmentsChange} />
+                                </InputGroupText>
+                            </InputGroupAddon>
+                            <Input placeholder={environment.description || environment.name} disabled />
+                        </InputGroup>
+                    </div>
+                ))}
+                <div className="col save">
                     <Button color="info" type="submit">
                         <Locale id={"form-save"} locales={locales}>Save</Locale>
                     </Button>
                 </div>
             </form>
-
-            {false ? (
-                <div className="col right-align">
-                    <Button color="info" onClick={() => onSelectResource("")}>
-                        <Locale id={"add"} locales={locales}>Add</Locale>
-                    </Button>
-                </div>
-            ) : null}
         </>
     );
 };
