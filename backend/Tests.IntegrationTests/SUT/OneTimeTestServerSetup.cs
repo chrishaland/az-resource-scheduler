@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Azure.ResourceManager.Compute;
 using Hangfire;
 using Hangfire.MemoryStorage;
 using Microsoft.AspNetCore.Authentication;
@@ -62,6 +63,7 @@ public class OneTimeTestServerSetup
         .UseStartup<Host.Startup>()
         .ConfigureTestServices(services =>
         {
+            services.AddTransient(_ => new Mock<ComputeManagementClient>().Object);
             services.AddDbContext<DatabaseContext>(options =>
             {
                 options.UseInMemoryDatabase("Database");

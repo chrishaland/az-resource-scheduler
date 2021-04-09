@@ -937,6 +937,11 @@
         "resolved": "1.0.3",
         "contentHash": "56dW8jgSsvGs/tULn+r1UbS+o0rBvgMj+6Lta6uao4j8Kzx1kVxMf56LPKO070VqjWcGyMB4K4R6M4gVKutG9A=="
       },
+      "Nager.Date": {
+        "type": "Transitive",
+        "resolved": "1.28.2",
+        "contentHash": "h3v3VgVLFCEO2DmEnWOlxJEfSj1lEsl26KaNdcgU6QB/lpUVIdT76vA7Ue2lswuX9qUAVCdd0ZKFJYo27w/lUQ=="
+      },
       "NETStandard.Library": {
         "type": "Transitive",
         "resolved": "2.0.0",
@@ -1911,6 +1916,7 @@
           "Hangfire.Core": "1.7.20",
           "Microsoft.AspNetCore.Authentication.OpenIdConnect": "5.0.4",
           "Microsoft.AspNetCore.Mvc.Abstractions": "2.2.0",
+          "Nager.Date": "1.28.2",
           "Repository": "1.0.0",
           "Unleash.Client": "1.6.1"
         }

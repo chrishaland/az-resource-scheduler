@@ -7,11 +7,14 @@ using Microsoft.Extensions.Hosting;
 using Repository;
 using Serilog;
 using Serilog.Events;
-using Serilog.Formatting.Compact;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Unleash;
+#if !DEBUG
+using Serilog.Formatting.Compact;
+using System.IO;
+#endif
 
 namespace Host
 {
