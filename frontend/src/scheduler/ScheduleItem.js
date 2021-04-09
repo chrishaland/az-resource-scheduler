@@ -24,7 +24,7 @@ export const ScheduleItem = (props) => {
     };
 
     return (
-        <InputGroup>
+        <InputGroup className="col col-lg-6 scheduler">
             <Input placeholder={environment.description || environment.name} disabled />
             <InputGroupAddon addonType="append">
                 <InputGroupButtonDropdown addonType="append" isOpen={dropdownOpen} toggle={toggleDropDown}>

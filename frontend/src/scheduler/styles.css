@@ -9,3 +9,7 @@
 div {
     margin-bottom: 0.2rem;
 }
+
+.scheduler {
+    float: left;
+}
