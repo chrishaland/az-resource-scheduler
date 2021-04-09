@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Input, InputGroupAddon, InputGroupText, InputGroupButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem, InputGroup } from 'reactstrap';
+import { Button, Input, InputGroupAddon, InputGroupButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem, InputGroup } from 'reactstrap';
 import { Locale } from '../translations/locale';
 import { locales } from './locales';
 import './styles.css';
@@ -38,9 +38,9 @@ export const ScheduleItem = (props) => {
                             </DropdownItem>
                         ))}
                     </DropdownMenu>
-                <Button color="info" onClick={() => onStartEnvironment(environment.id)}>
-                    <Locale id={"list-header-start"} locales={locales}>Start</Locale>
-                </Button>
+                    <Button color="info" onClick={() => onStartEnvironment(environment.id)}>
+                        <Locale id={"list-header-start"} locales={locales}>Start</Locale>
+                    </Button>
                 </InputGroupButtonDropdown>
             </InputGroupAddon>
         </InputGroup>

@@ -55,14 +55,6 @@ export const EnvironmentForm = (props) => {
                     </Button>
                 </div>
             </form>
-
-            {false ? (
-            <div className="col right-align">
-                <Button color="info" onClick={() => onSelectEnvironment("")}>
-                    <Locale id={"add"} locales={locales}>Add</Locale>
-                </Button>
-            </div>
-            ) : null}
         </>
     );
 };

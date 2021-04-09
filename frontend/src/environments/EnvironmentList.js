@@ -18,7 +18,11 @@ export const EnvironmentList = (props) => {
                     <th>
                         <Locale id={"list-header-description"} locales={locales}>Description</Locale>
                     </th>
-                    <th>&nbsp;</th>
+                    <th className="right-align">
+                        <Button color="info" onClick={() => onSelectEnvironment("")}>
+                            <Locale id={"add"} locales={locales}>Add</Locale>
+                        </Button>
+                    </th>
                 </tr>
             </thead>
             <tbody>
@@ -34,16 +38,6 @@ export const EnvironmentList = (props) => {
                         </td>
                     </tr>
                 ))}
-                <tr key="add">
-                    <th>&nbsp;</th>
-                    <td>&nbsp;</td>
-                    <td>&nbsp;</td>
-                    <td className="right-align">
-                        <Button color="info" onClick={() => onSelectEnvironment("")}>
-                            <Locale id={"add"} locales={locales}>Add</Locale>
-                        </Button>
-                    </td>
-                </tr>
             </tbody>
         </Table>
     );
