@@ -1,9 +1,12 @@
 FROM node:14 as build
 WORKDIR /src
+COPY [".yarn/releases/*", ".yarn/releases/"]
+COPY ["yarn.lock", "."]
+COPY [".yarnrc.yml", "."]
 COPY ["package*.json", "."]
-RUN npm ci --only=production
+RUN yarn install
 COPY . .
-RUN npm run build
+RUN yarn build
 
 FROM nginx:stable
 EXPOSE 8080

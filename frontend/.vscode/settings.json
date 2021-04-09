@@ -1,0 +1,20 @@
+{
+    "search.exclude": {
+        "**/modules/**/build": true,
+        "**/modules/**/es": true,
+        "**/node_modules/": true,
+        "**/.yarn": true,
+        "**/.pnp.*": true
+    },
+    "eslint.packageManager": "yarn",
+    "eslint.options": {
+        "configFile": ".eslintrc.yml"
+    },
+    "files.watcherExclude": {
+		"**/.yarn/**": true,
+        "**/node_modules/**": true,
+	},
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true
+    }
+}
