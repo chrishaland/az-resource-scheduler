@@ -3,43 +3,39 @@
 ## Configuration
 
 ### Configuring OpenId Connect Client
-The following configuration describes creating a new OpenID Connect client in the IAM product, [Keycloak](https://www.keycloak.org/).
 
-Create a client with the following properties:
+The following configuration describes creating a new OpenID Connect client in [Azure Active Directory](https://portal.azure.com/).
 
-| Type | Value |
-| ---- | ----- |
-| Client protocol | openid-connect |
-| Access Type | confidential |
-| Standard Flow Enabled | ON |
-| Implicit Flow Enabled | OFF |
-| Direct Access Grants Enabled | OFF |
-| Service Accounts Enabled | OFF |
-| Authorization Enabled | OFF |
-| Valid redirects | https://\<hostname>, https://\<hostname>/api/account/signin-oidc |
+Go to the [Azure Portal](https://portal.azure.com/) and open the resource `Azure Active Directory`. 
 
-Add the following roles to the client:
+Go to `App registrations` and register a new application:
 
-* user
-* admin
+* Single tenant
+* Redirect URI as `Single-page application` (multiple values can be added later in the clients `Authentication` section)
+  * http(s)://\<hostname>/authentication/callback
+  * http(s)://\<hostname>/authentication/silent_callback
 
-Add a mapper, allowing the user info endpoint access to the roles assign to a user:
+Once created, make sure the following settings are updated / correct:
 
-| Type | Value |
-| ---- | ----- |
-| Name | role mapping |
-| Mapper Type | User Client Role |
-| Client ID | \<client_id>
-| Multivalued | ON |
-| Token Claim Name | ${client_id}\\.roles |
-| Claim JSON Type | String |
-| Add to ID token | OFF |
-| Add to access token | OFF |
-| Add to userinfo | ON |
+* Authentication - Allow public client flows
+  * Yes
+* Authentication - Implicit grant and hybrid flows
+  * All unchecked
+* Token configuration
+  * Add group claim, with value `Group ID` and `Emit groups as role claims` as checked
+
 
 ## Development
 
 ### Adding database migrations
+
+Ensure you have the `dotnet-ef` tool installed:
+
+```
+dotnet tool install --global dotnet-ef
+```
+
+Add a code first database migration:
 
 ```
 $env:ASPNETCORE_ENVIRONMENT = "Development"
@@ -50,22 +46,21 @@ dotnet ef migrations add "<migration_name>" --startup-project Host --project Rep
 
 ```
 # Database connection
-dotnet user-secrets set "ConnectionStrings:Database" "Server=localhost;Database=az-resource-scheduler;User ID=sa;Password=yourStrong(!)Password;MultipleActiveResultSets=true"
+dotnet user-secrets set --project Host "ConnectionStrings:Database" "Server=localhost;Database=az-resource-scheduler;User ID=sa;Password=yourStrong(!)Password;MultipleActiveResultSets=true"
 
 # Authentication
-dotnet user-secrets set "oidc:clientId" "<clientId>"
-dotnet user-secrets set "oidc:clientSecret" "<clientSecret>"
-dotnet user-secrets set "oidc:authorityUri" "<authorityUri>"
+dotnet user-secrets set --project Host "oidc:audience" "<audience>"
+dotnet user-secrets set --project Host "oidc:authorityUri" "<authorityUri>"
 
-# Azure
-dotnet user-secrets set "azure:subscriptionId" "<subscriptionId>"
-dotnet user-secrets set "azure:tenantId" "<tenantId>"
-dotnet user-secrets set "azure:clientId" "<clientId>"
-dotnet user-secrets set "azure:clientSecret" "<clientSecret>"
+dotnet user-secrets set --project Host "oidc:claim_types:name" "<name>" # (default: name)
+dotnet user-secrets set --project Host "oidc:claim_types:role" "<role>" # (default: roles)
+
+dotnet user-secrets set --project Host "oidc:roles:user" "<user>" # (default: user)
+dotnet user-secrets set --project Host "oidc:roles:admin" "<admin>" # (default: admin)
 
 # Feature flags
-dotnet user-secrets set "unleash:apiUrl" "<apiUrl>"
-dotnet user-secrets set "unleash:instanceTag" "<instanceTag>"
+dotnet user-secrets set --project Host "unleash:apiUrl" "<apiUrl>"
+dotnet user-secrets set --project Host "unleash:instanceTag" "<instanceTag>"
 ```
 
 ## Tooling and dependencies
