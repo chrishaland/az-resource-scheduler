@@ -3,6 +3,8 @@
 **/.env
 **/.git
 **/.gitignore
+**/.editorconfig
+**/.azure-pipeline.yml
 **/.project
 **/.settings
 **/.toolstarget
