@@ -11,6 +11,13 @@
           <IncludeTestAssembly>true</IncludeTestAssembly>
           <SkipAutoProps>true</SkipAutoProps>
           <DeterministicReport>false</DeterministicReport>
+          <CodeCoverage>
+            <Functions>
+              <Exclude>
+                <Function>^Repository.Migrations\..*</Function> 
+              </Exclude>  
+            </Functions>
+          </CodeCoverage>
         </Configuration>
       </DataCollector>
     </DataCollectors>
