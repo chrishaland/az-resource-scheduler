@@ -12,8 +12,12 @@ Create a `oidc.json` file in `./public/_configuration/` with the format:
 
 ```
 {
+  "authority": "<oidc_provider_url>",
   "client_id": "<client_id>",
-  "authority": "<oidc_provider_url>"
+  "scope": "openid profile email",
+  "roles": {
+    "admin": "admin"
+  }
 }
 ```
 

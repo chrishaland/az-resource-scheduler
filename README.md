@@ -1,4 +1,8 @@
-# Azure Resource Scheduler
+# Cloud Resource Scheduler
+
+[![Azure DevOps builds (branch)](https://img.shields.io/azure-devops/build/chrishaland/cloud-resource-scheduler/6/main)](https://chrishaland.visualstudio.com/cloud-resource-scheduler/_build/latest?definitionId=6&branchName=main)
+[![Azure DevOps tests (branch)](https://img.shields.io/azure-devops/tests/chrishaland/cloud-resource-scheduler/6/main)](https://chrishaland.visualstudio.com/cloud-resource-scheduler/_build/latest?definitionId=6&branchName=main)
+[![Azure DevOps coverage (branch)](https://img.shields.io/azure-devops/coverage/chrishaland/cloud-resource-scheduler/6/main)](https://chrishaland.visualstudio.com/cloud-resource-scheduler/_build/latest?definitionId=6&branchName=main)
 
 ## Configuration
 
@@ -18,12 +22,12 @@ Go to `App registrations` and register a new application:
 Once created, make sure the following settings are updated / correct:
 
 * Authentication - Allow public client flows
-  * Yes
+  * No
 * Authentication - Implicit grant and hybrid flows
   * All unchecked
-* Token configuration
-  * Add group claim, with value `Group ID` and `Emit groups as role claims` as checked
-
+* App roles
+  * `user`
+  * `admin`
 
 ## Development
 
@@ -46,7 +50,7 @@ dotnet ef migrations add "<migration_name>" --startup-project Host --project Rep
 
 ```
 # Database connection
-dotnet user-secrets set --project Host "ConnectionStrings:Database" "Server=localhost;Database=az-resource-scheduler;User ID=sa;Password=yourStrong(!)Password;MultipleActiveResultSets=true"
+dotnet user-secrets set --project Host "ConnectionStrings:Database" "Server=localhost;Database=cloud-resource-scheduler;User ID=sa;Password=yourStrong(!)Password;MultipleActiveResultSets=true"
 
 # Authentication
 dotnet user-secrets set --project Host "oidc:audience" "<audience>"
