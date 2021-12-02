@@ -26,18 +26,10 @@ public class List_providers_tests
             var dto1 = content?.Providers.Single(e => e.Id.Equals(entity1.Id));
             Assert.That(dto1?.Id, Is.EqualTo(entity1.Id));
             Assert.That(dto1?.Name, Is.EqualTo(entity1.Name));
-            Assert.That(dto1?.AzureProviderExtentions?.ClientId, Is.EqualTo(entity1.ClientId));
-            Assert.That(dto1?.AzureProviderExtentions?.ClientSecret, Is.EqualTo(entity1.ClientSecret));
-            Assert.That(dto1?.AzureProviderExtentions?.SubscriptionId, Is.EqualTo(entity1.SubscriptionId));
-            Assert.That(dto1?.AzureProviderExtentions?.TenantId, Is.EqualTo(entity1.TenantId));
 
             var dto2 = content?.Providers.Single(e => e.Id.Equals(entity2.Id));
             Assert.That(dto2?.Id, Is.EqualTo(entity2.Id));
             Assert.That(dto2?.Name, Is.EqualTo(entity2.Name));
-            Assert.That(dto2?.AzureProviderExtentions?.ClientId, Is.EqualTo(entity2.ClientId));
-            Assert.That(dto2?.AzureProviderExtentions?.ClientSecret, Is.EqualTo(entity2.ClientSecret));
-            Assert.That(dto2?.AzureProviderExtentions?.SubscriptionId, Is.EqualTo(entity2.SubscriptionId));
-            Assert.That(dto2?.AzureProviderExtentions?.TenantId, Is.EqualTo(entity2.TenantId));
         });
     }
 

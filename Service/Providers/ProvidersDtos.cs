@@ -1,5 +1,7 @@
 ﻿namespace Service.Providers;
 
+public record AzureProviderDto(string TenantId, string SubscriptionId, string ClientId, string ClientSecret);
+
 public record UpsertProviderRequest(
         Guid? Id,
         string Name,
@@ -7,21 +9,12 @@ public record UpsertProviderRequest(
     );
 
 public record GetProviderRequest(Guid Id);
-public record GetProviderResponse(ProviderDto Provider);
 
-public record ListProvidersRequest();
-public record ListProvidersResponse
-{
-    public ProviderDto[] Providers { get; init; } = Array.Empty<ProviderDto>();
-}
+public record GetProviderResponse(GetProviderDto Provider);
 
-public record ProviderDto(
-    Guid Id,
-    string Name,
-    AzureProviderDto? AzureProviderExtentions
-)
+public record GetProviderDto(Guid Id, string Name, AzureProviderDto? AzureProviderExtentions)
 {
-    internal static ProviderDto FromEntity(AzureProvider entity) => new(
+    internal static GetProviderDto FromEntity(AzureProvider entity) => new(
         Id: entity.Id,
         Name: entity.Name,
         AzureProviderExtentions: new AzureProviderDto(
@@ -33,9 +26,17 @@ public record ProviderDto(
     );
 }
 
-public record AzureProviderDto(
-    string TenantId,
-    string SubscriptionId,
-    string ClientId,
-    string ClientSecret
-);
+public record ListProvidersRequest();
+
+public record ListProvidersResponse
+{
+    public ListProvidersDto[] Providers { get; init; } = Array.Empty<ListProvidersDto>();
+}
+
+public record ListProvidersDto(Guid Id, string Name)
+{
+    internal static ListProvidersDto FromEntity(Provider entity) => new(
+        Id: entity.Id,
+        Name: entity.Name
+    );
+}
