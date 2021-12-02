@@ -9,7 +9,7 @@ public class ListEnvironmentsHandler : QueryHandlerBase<ListEnvironmentsRequest,
     {
         _context = context;
     }
-
+    
     public override async Task<ActionResult<ListEnvironmentsResponse>> Execute([FromBody] ListEnvironmentsRequest request, CancellationToken ct)
     {
         var entities = await _context.Environments
@@ -17,7 +17,7 @@ public class ListEnvironmentsHandler : QueryHandlerBase<ListEnvironmentsRequest,
             .ToListAsync(ct);
 
         var environments = entities
-            .Select(EnvironmentDto.FromEntity)
+            .Select(ListEnvironmentsDto.FromEntity)
             .ToArray();
 
         return Ok(new ListEnvironmentsResponse
