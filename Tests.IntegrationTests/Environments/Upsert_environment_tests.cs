@@ -1,4 +1,6 @@
-﻿namespace Tests.IntegrationTests.Environments;
+﻿using Service.TimeZones;
+
+namespace Tests.IntegrationTests.Environments;
 
 [TestFixture]
 public class Upsert_environment_tests
@@ -11,7 +13,8 @@ public class Upsert_environment_tests
             name = "qa",
             description = "Test",
             scheduledStartup = "* * * * *",
-            scheduledUptime = 6
+            scheduledUptime = 6,
+            timeZoneId = TimeZoneExtentions.DefaultTimeZoneId
         };
         var request = new HttpRequestMessage(HttpMethod.Post, "/api/environment/upsert");
 
@@ -53,7 +56,8 @@ public class Upsert_environment_tests
             name = "2",
             description = "Two",
             scheduledStartup = "* 2 * * *",
-            scheduledUptime = 2
+            scheduledUptime = 2,
+            timeZoneId = TimeZoneExtentions.DefaultTimeZoneId
         };
         var request = new HttpRequestMessage(HttpMethod.Post, "/api/environment/upsert");
 

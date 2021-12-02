@@ -1,19 +1,20 @@
 ﻿namespace Service.Environments;
 
-public record UpsertEnvironmentRequest(Guid? Id, string Name, string Description, string ScheduledStartup, int ScheduledUptime, string? TimeZoneId);
+public record UpsertEnvironmentRequest(Guid? Id, string Name, string Description, string ScheduledStartup, int ScheduledUptime, string TimeZoneId);
 
 public record GetEnvironmentRequest(Guid Id);
 
-public record GetEnvironmentResponse(GetEnvironmentDto Environment, TimeZoneDto[] TimeZones);
+public record GetEnvironmentResponse(GetEnvironmentDto Environment);
 
-public record GetEnvironmentDto(Guid Id, string Name, string Description, string ScheduledStartup, int ScheduledUptime)
+public record GetEnvironmentDto(Guid Id, string Name, string Description, string ScheduledStartup, int ScheduledUptime, string TimeZoneId)
 {
-    internal static GetEnvironmentDto FromEntity(Environment entity) => new(
+    internal static GetEnvironmentDto FromEntity(Environment entity, string timeZoneId) => new(
         entity.Id,
         entity.Name,
         entity.Description,
         entity.ScheduledStartup,
-        entity.ScheduledUptime
+        entity.ScheduledUptime,
+        timeZoneId
     );
 }
 
@@ -32,5 +33,3 @@ public record ListEnvironmentsDto(Guid Id, string Name, string Description)
         entity.Description
     );
 }
-
-public record TimeZoneDto(string Id);

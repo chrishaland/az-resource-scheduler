@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using TimeZoneConverter;
 
 namespace Service.Environments;
 
@@ -26,11 +25,10 @@ public class GetEnvironmentHandler : QueryHandlerBase<GetEnvironmentRequest, Get
             return NotFound();
         }
 
-        var dto = GetEnvironmentDto.FromEntity(entity);
-        return base.Ok(new GetEnvironmentResponse(dto, TimeZones));
-    }
+        var recurringEnvironmentJob = JobExtentions.GetRecurringEnvironmentJob(entity.Id);
+        var timeZone = TimeZoneExtentions.GetTimeZoneIdOrDefault(recurringEnvironmentJob?.TimeZoneId);
 
-    private static TimeZoneDto[] TimeZones => TZConvert.KnownWindowsTimeZoneIds
-        .Select(tz => new TimeZoneDto(tz))
-        .ToArray();
+        var dto = GetEnvironmentDto.FromEntity(entity, timeZone);
+        return base.Ok(new GetEnvironmentResponse(dto));
+    }
 }

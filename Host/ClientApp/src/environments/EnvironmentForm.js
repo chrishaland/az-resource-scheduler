@@ -1,14 +1,19 @@
-import React from "react";
-import { Input, Button } from 'reactstrap';
+import React, { useState } from "react";
+import { Input, InputGroupAddon, InputGroupButtonDropdown, Button, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import { Locale } from '../translations/locale';
 import { locales } from './locales';
 import { useEnvironment } from './hooks';
+import { useTimeZones } from '../timezones/hooks';
 import './styles.css';
 
 export const EnvironmentForm = (props) => {
     const { id, removeSelectedEnvironment } = props;
 
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+    const toggleDropDown = () => setDropdownOpen(!dropdownOpen);
+
     const [environment, changeEnvironment, upsert] = useEnvironment(id);
+    const [timeZones] = useTimeZones();
 
     const handleChange = (event) => {
         const name = event.target.name;
@@ -48,6 +53,24 @@ export const EnvironmentForm = (props) => {
                 <div className="col">
                     <Locale id={"form-scheduledUptime"} locales={locales}>Scheduled uptime (hours)</Locale>
                     <Input type="text" name="scheduledUptime" value={environment.scheduledUptime} onChange={handleChange} />
+                </div>
+                <div className="col">
+                    <InputGroupAddon addonType="append">
+                        <InputGroupButtonDropdown addonType="append" isOpen={dropdownOpen} toggle={toggleDropDown}>
+                            <DropdownToggle split outline color="info">
+                                <Locale id={timeZones.find(t => t.id === environment.timeZoneId)?.id ?? "form-timezone-id"} locales={locales}>
+                                    {timeZones.find(t => t.id === environment.timeZoneId)?.id ?? "Choose..."}
+                                </Locale>
+                            </DropdownToggle>
+                            <DropdownMenu>
+                                {timeZones.sort((a, b) => (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0)).map(timeZone => (
+                                    <DropdownItem key={timeZone.id} onClick={() => changeEnvironment("timeZoneId", timeZone.id)}>
+                                        <Locale id={timeZone.id} locales={locales}>{timeZone.id}</Locale>
+                                    </DropdownItem>
+                                ))}
+                            </DropdownMenu>
+                        </InputGroupButtonDropdown>
+                    </InputGroupAddon>
                 </div>
                 <div className="col">
                     <Button color="info" type="submit">
