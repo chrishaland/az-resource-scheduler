@@ -1,5 +1,8 @@
-﻿namespace Service.Providers;
+﻿using Microsoft.AspNetCore.Authorization;
 
+namespace Service.Providers;
+
+[Authorize(Policy = "admin")]
 [Route("api/provider/get")]
 public class GetProviderHandler : QueryHandlerBase<GetProviderRequest, GetProviderResponse>
 {
@@ -23,11 +26,11 @@ public class GetProviderHandler : QueryHandlerBase<GetProviderRequest, GetProvid
             return NotFound();
         }
 
-        ProviderDto dto;
+        GetProviderDto dto;
         switch (entity)
         {
             case AzureProvider vm:
-                dto = ProviderDto.FromEntity(vm);
+                dto = GetProviderDto.FromEntity(vm);
                 break;
             default:
                 return BadRequest();
