@@ -17,6 +17,7 @@ public partial class Startup
         services.AddAuthorizationAndPolicies(Configuration);
         services.AddOpenIdConnectAuthentication(Configuration);
 
+        services.AddHttpClient();
         services.AddUnleash(Configuration);
 
         services.AddTransient<StopResourceJob>();

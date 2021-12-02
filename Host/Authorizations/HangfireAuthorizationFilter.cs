@@ -45,7 +45,7 @@ public class HangfireAuthorizationFilter : IDashboardAuthorizationFilter
 
             var adminRole = claims.FindFirst(c =>
                 c.Type == ClaimTypes.Role &&
-                c.Value == configuration.GetValue<string>("oidc:roles:admin")
+                c.Value == configuration.GetValueOrDefault("oidc:roles:admin", "admin")
             );
 
             if (adminRole == null) return false;
