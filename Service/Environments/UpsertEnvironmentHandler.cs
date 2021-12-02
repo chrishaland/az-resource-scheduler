@@ -1,8 +1,6 @@
 ﻿using Cronos;
 using Hangfire;
 using Microsoft.AspNetCore.Authorization;
-using Service.Jobs;
-using TimeZoneConverter;
 
 namespace Service.Environments;
 
@@ -27,8 +25,7 @@ public class UpsertEnvironmentHandler : CommandHandlerBase<UpsertEnvironmentRequ
             return BadRequest(errorMessages);
         }
 
-        var timeZone = TZConvert.GetTimeZoneInfo(
-            string.IsNullOrEmpty(request.TimeZoneId) ? "W. Europe Standard Time" : request.TimeZoneId);
+        var timeZone = TimeZoneExtentions.GetTimeZoneInfoOrDefault(request.TimeZoneId);
 
         Guid id;
         if (request.Id.HasValue)
@@ -80,17 +77,7 @@ public class UpsertEnvironmentHandler : CommandHandlerBase<UpsertEnvironmentRequ
 
     private void AddOrUpdateRecurringJob(Environment environment, TimeZoneInfo timeZone)
     {
-        var recurringJobName = $"start_environment_{environment.Id}";
-
-        _recurringJob.RemoveIfExists(recurringJobName);
-        if (environment.ScheduledUptime > 0)
-        {
-            _recurringJob.AddOrUpdate<StartEnvironmentJob>(
-                recurringJobId: recurringJobName,
-                methodCall: job => job.Execute(environment.Id, environment.ScheduledUptime * 60, false, false, null),
-                cronExpression: environment.ScheduledStartup,
-                timeZone: timeZone);
-        }
+        _recurringJob.AddOrUpdateEnvironmentJob(environment, timeZone);
     }
 
     private async Task<(bool isBadRequest, string[] errorMessages)> IsBadRequest(UpsertEnvironmentRequest request, CancellationToken ct)
@@ -129,8 +116,7 @@ public class UpsertEnvironmentHandler : CommandHandlerBase<UpsertEnvironmentRequ
             errorMessages.Add("invalid_scheduledStartup");
         }
 
-        if (!string.IsNullOrEmpty(request.TimeZoneId) &&
-            !TZConvert.TryGetTimeZoneInfo(request.TimeZoneId, out var _))
+        if (!TimeZoneExtentions.IsValidTimeZone(request.TimeZoneId))
         {
             isBadRequest = true;
             errorMessages.Add("invalid_time_zone_id");

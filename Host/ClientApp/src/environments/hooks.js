@@ -4,7 +4,7 @@ import { cqrs } from '../cqrs.js';
 import { useReactOidc } from "@axa-fr/react-oidc-context";
 
 export const useEnvironment = (id) => {
-    const emptyState = () => ({ id: "", name: "", description: "", scheduledStartup: "0 7 * * *", scheduledUptime: 0 });
+    const emptyState = () => ({ id: "", name: "", description: "", scheduledStartup: "0 7 * * *", scheduledUptime: 0, timeZoneId: "W. Europe Standard Time" });
     const [environment, setEnvironment] = useState(emptyState);
     const { oidcUser } = useReactOidc();
 
@@ -30,7 +30,8 @@ export const useEnvironment = (id) => {
             name: environment.name,
             description: environment.description,
             scheduledStartup: environment.scheduledStartup,
-            scheduledUptime: environment.scheduledUptime
+            scheduledUptime: environment.scheduledUptime,
+            timeZoneId: environment.timeZoneId
         };
         cqrs('/api/environment/upsert', request, oidcUser.id_token)
             .then((response) => response.json())
