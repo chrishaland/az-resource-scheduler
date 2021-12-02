@@ -29,15 +29,11 @@ public class List_environments_tests
             Assert.That(dto1.Id, Is.EqualTo(entity1.Id));
             Assert.That(dto1.Name, Is.EqualTo(entity1.Name));
             Assert.That(dto1.Description, Is.EqualTo(entity1.Description));
-            Assert.That(dto1.ScheduledStartup, Is.EqualTo(entity1.ScheduledStartup));
-            Assert.That(dto1.ScheduledUptime, Is.EqualTo(entity1.ScheduledUptime));
 
             var dto2 = content.Environments.Single(e => e.Id.Equals(entity2.Id));
             Assert.That(dto2.Id, Is.EqualTo(entity2.Id));
             Assert.That(dto2.Name, Is.EqualTo(entity2.Name));
             Assert.That(dto2.Description, Is.EqualTo(entity2.Description));
-            Assert.That(dto2.ScheduledStartup, Is.EqualTo(entity2.ScheduledStartup));
-            Assert.That(dto2.ScheduledUptime, Is.EqualTo(entity2.ScheduledUptime));
         });
     }
 

@@ -4,19 +4,11 @@ public record UpsertEnvironmentRequest(Guid? Id, string Name, string Description
 
 public record GetEnvironmentRequest(Guid Id);
 
-public record GetEnvironmentResponse(EnvironmentDto Environment, TimeZoneDto[] TimeZones);
+public record GetEnvironmentResponse(GetEnvironmentDto Environment, TimeZoneDto[] TimeZones);
 
-public record ListEnvironmentsRequest;
-
-public record ListEnvironmentsResponse
+public record GetEnvironmentDto(Guid Id, string Name, string Description, string ScheduledStartup, int ScheduledUptime)
 {
-    public EnvironmentDto[] Environments { get; init; } = Array.Empty<EnvironmentDto>();
-}
-
-public record TimeZoneDto(string Id);
-public record EnvironmentDto(Guid Id, string Name, string Description, string ScheduledStartup, int ScheduledUptime)
-{
-    internal static EnvironmentDto FromEntity(Environment entity) => new(
+    internal static GetEnvironmentDto FromEntity(Environment entity) => new(
         entity.Id,
         entity.Name,
         entity.Description,
@@ -24,3 +16,21 @@ public record EnvironmentDto(Guid Id, string Name, string Description, string Sc
         entity.ScheduledUptime
     );
 }
+
+public record ListEnvironmentsRequest;
+
+public record ListEnvironmentsResponse
+{
+    public ListEnvironmentsDto[] Environments { get; init; } = Array.Empty<ListEnvironmentsDto>();
+}
+
+public record ListEnvironmentsDto(Guid Id, string Name, string Description)
+{
+    internal static ListEnvironmentsDto FromEntity(Environment entity) => new(
+        entity.Id,
+        entity.Name,
+        entity.Description
+    );
+}
+
+public record TimeZoneDto(string Id);

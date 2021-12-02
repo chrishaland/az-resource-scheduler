@@ -1,7 +1,9 @@
-﻿using TimeZoneConverter;
+﻿using Microsoft.AspNetCore.Authorization;
+using TimeZoneConverter;
 
 namespace Service.Environments;
 
+[Authorize(Policy = "admin")]
 [Route("api/environment/get")]
 public class GetEnvironmentHandler : QueryHandlerBase<GetEnvironmentRequest, GetEnvironmentResponse>
 {
@@ -24,7 +26,7 @@ public class GetEnvironmentHandler : QueryHandlerBase<GetEnvironmentRequest, Get
             return NotFound();
         }
 
-        var dto = EnvironmentDto.FromEntity(entity);
+        var dto = GetEnvironmentDto.FromEntity(entity);
         return base.Ok(new GetEnvironmentResponse(dto, TimeZones));
     }
 
