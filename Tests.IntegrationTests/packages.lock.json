@@ -1695,6 +1695,7 @@
           "Libraries": "1.0.0",
           "Nager.Date": "1.30.0",
           "Repository": "1.0.0",
+          "System.Collections": "4.3.0",
           "TimeZoneConverter": "3.5.0",
           "Unleash.Client": "2.0.0"
         }
