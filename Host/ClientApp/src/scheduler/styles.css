@@ -1,15 +1,12 @@
-.header {
-    margin-bottom: 3rem;
+.schedule-item > .badge {
+    margin-left: 6px;
 }
 
-.right-align {
-    text-align: right;
+.schedule-item > .root-react-component-countdown-timer {
+    display: inline-block;
+    margin-left: 6px;
 }
 
-div {
-    margin-bottom: 0.2rem;
-}
-
-.scheduler {
-    float: left;
+.schedule-item > .root-react-component-countdown-timer > .displayedTime > div {
+    border: none !important;
 }

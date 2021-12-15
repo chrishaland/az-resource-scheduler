@@ -1,8 +1,4 @@
-﻿using Service.Jobs;
-
-namespace Service.Schedules;
-
-public record ScheduleEnvironmentManuallyRequest(Guid EnvironmentId, int UptimeInMinutes);
+﻿namespace Service.Schedules;
 
 [Route("api/schedule/start-environment-manually")]
 public class ScheduleEnvironmentManuallyHandler : CommandHandlerBase<ScheduleEnvironmentManuallyRequest>
@@ -21,6 +17,12 @@ public class ScheduleEnvironmentManuallyHandler : CommandHandlerBase<ScheduleEnv
         _logger.LogInformation("User '{User}' scheduled environment '{Environment}' to run for {Uptime} minutes",
             HttpContext.User?.Identity?.Name, request.EnvironmentId, request.UptimeInMinutes);
 
+        var (isBadRequest, errorMessages) = IsBadRequest(request, ct);
+        if (isBadRequest)
+        {
+            return BadRequest(errorMessages);
+        }
+
         await _startEnvironmentJob.Execute(
             environmentId: request.EnvironmentId,
             uptimeInMinutes: request.UptimeInMinutes,
@@ -29,5 +31,19 @@ public class ScheduleEnvironmentManuallyHandler : CommandHandlerBase<ScheduleEnv
             currentTime: null
         );
         return Ok(new CommandResponse(request.EnvironmentId.ToString()));
+    }
+
+    private (bool isBadRequest, string[] errorMessages) IsBadRequest(ScheduleEnvironmentManuallyRequest request, CancellationToken ct)
+    {
+        var isBadRequest = false;
+        var errorMessages = new List<string>();
+
+        if (request.UptimeInMinutes <= 0 || request.UptimeInMinutes > 1440)
+        {
+            isBadRequest = true;
+            errorMessages.Add("invalid_uptime_in_minutes");
+        }
+
+        return (isBadRequest, errorMessages.ToArray());
     }
 }

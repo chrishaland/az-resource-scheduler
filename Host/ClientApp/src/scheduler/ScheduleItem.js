@@ -1,50 +1,48 @@
 import React, { useState } from 'react';
-import { Button, Input, InputGroupAddon, InputGroupButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem, InputGroup } from 'reactstrap';
+import { Badge, Button, Input, InputGroup, InputGroupText } from 'reactstrap';
 import { Locale } from '../translations/locale';
 import { locales } from './locales';
-import './styles.css';
 import { cqrs } from '../cqrs.js';
 import { useReactOidc } from "@axa-fr/react-oidc-context";
+import CountdownTimer from "react-component-countdown-timer";
+
+import './styles.css';
+import './react-component-countdown-timer.scss'
 
 export const ScheduleItem = (props) => {
-    const { environment } = props;
-    const [dropdownOpen, setDropdownOpen] = useState(false);
-    const toggleDropDown = () => setDropdownOpen(!dropdownOpen);
+    const { environment, environmentUptime } = props;
     const { oidcUser } = useReactOidc();
 
-    const [uptime, setUptime] = useState(60);
-
-    const uptimes = {
-        60: { id: "uptime-1h", default: "1 hour" },
-        120: { id: "uptime-2h", default: "2 hours", value: 120 },
-        240: { id: "uptime-4h", default: "4 hours", value: 240 },
-        480: { id: "uptime-8h", default: "8 hours", value: 480 }
-    };
+    const [uptime, setUptime] = useState(1);
 
     const onStartEnvironment = () => {
-        cqrs('/api/schedule/start-environment-manually', { environmentId: environment.id, uptimeInMinutes: uptime }, oidcUser.id_token);
+        cqrs('/api/schedule/start-environment-manually', { environmentId: environment.id, uptimeInMinutes: uptime * 60 }, oidcUser.id_token);
     };
 
     return (
-        <InputGroup className="col col-lg-6 scheduler">
-            <Input placeholder={environment.description || environment.name} disabled />
-            <InputGroupAddon addonType="append">
-                <InputGroupButtonDropdown addonType="append" isOpen={dropdownOpen} toggle={toggleDropDown}>
-                    <DropdownToggle split outline color="info">
-                        <Locale id={uptimes[uptime].id} locales={locales}>{uptimes[uptime].default}</Locale>
-                    </DropdownToggle>
-                    <DropdownMenu>
-                        {Object.keys(uptimes).map(key => (
-                            <DropdownItem key={key} onClick={() => setUptime(key)}>
-                                <Locale id={uptimes[key].id} locales={locales}>{uptimes[key].default}</Locale>
-                            </DropdownItem>
-                        ))}
-                    </DropdownMenu>
-                    <Button color="info" onClick={() => onStartEnvironment(environment.id)}>
-                        <Locale id={"list-header-start"} locales={locales}>Start</Locale>
-                    </Button>
-                </InputGroupButtonDropdown>
-            </InputGroupAddon>
-        </InputGroup>
+        <div className="schedule-item col">
+            {environment.description || environment.name}
+            <Badge pill color={(environmentUptime?.resourcesCount ?? 0) > 0 ? "success" : "secondary"}>
+                {environmentUptime?.resourcesCount ?? 0}
+            </Badge>
+            {environmentUptime ? (
+                <CountdownTimer 
+                    count={(new Date(environmentUptime?.scheduledStopTime) - new Date()) / 1000} 
+                    size={11}
+                    border
+                    hideDay
+                    direction="right"
+                />
+            ) : null}
+            <InputGroup>
+                <Input type="number" name="uptime" className="col-sm-1" value={uptime} onChange={event => setUptime(event.target.value)} />
+                <InputGroupText>
+                    <Locale id={"list-header-hours"} locales={locales}>hours</Locale>
+                </InputGroupText>
+                <Button color="info" onClick={() => onStartEnvironment(environment.id)}>
+                    <Locale id={"list-header-start"} locales={locales}>Start</Locale>
+                </Button>
+            </InputGroup>
+        </div>
     );
 }
